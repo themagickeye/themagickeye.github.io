@@ -1,26 +1,27 @@
 /* ============================================================
-   [NAZWA_ZESPOLU] — retro / vaporwave / CRT
+   [NAZWA_ZESPOLU] — retro / terminal / CRT
    Czysty CSS. Zero frameworków. Pod GitHub Pages.
-   Paleta: vaporwave (cyjan / róż / fiolet) na czerni.
-   Aby przełączyć na terminal (zieleń/bursztyn) — patrz sekcja
-   :root i podmień zmienne.
+   Paleta: monochromatyczny fosfor P1 (zieleń) na czerni —
+   jak w monitorach monochromatycznych. Jeden odcień, różnice
+   robi jasność, nie barwa.
+   Aby przełączyć na bursztyn — patrz zakomentowany blok niżej.
    ============================================================ */
 
 :root {
-  /* --- Paleta vaporwave (domyślna) --- */
-  --bg:        #0d0221;   /* głęboki fiolet-czerń */
-  --bg-panel:  #170a2e;
-  --fg:        #f6f6f6;
-  --accent:    #ff2ce8;   /* róż neon */
-  --accent-2:  #00f0ff;   /* cyjan */
-  --accent-3:  #8a2be2;   /* fiolet */
-  --dim:       #7a6ea3;
-  --border:    #00f0ff;
+  /* --- Paleta: terminal / fosfor zielony (domyślna) --- */
+  --bg:        #020602;   /* czerń z zielonkawym podkładem */
+  --bg-panel:  #061006;
+  --fg:        #b9ffc0;   /* tekst — łagodny fosfor, nie pełna jasność */
+  --accent:    #00e63c;   /* jasna zieleń — paski tytułów (reverse video) */
+  --accent-2:  #7dff8f;   /* jaśniejszy fosfor — linki, nawigacja, daty */
+  --accent-3:  #14602a;   /* ciemna zieleń — separatory */
+  --dim:       #4f8f5c;   /* wygaszona zieleń — tekst drugorzędny */
+  --border:    #1fb845;   /* ramki — ciemniejsze niż akcent, żeby nie krzyczały */
 
-  /* --- Alternatywa: terminal bursztyn/zieleń ---
-     --bg: #0a0a0a; --bg-panel:#0f0f0f; --fg:#e0ffe0;
-     --accent:#33ff66; --accent-2:#ffb000; --accent-3:#33ff66;
-     --dim:#3a6a3a; --border:#33ff66;
+  /* --- Alternatywa: terminal bursztynowy (VT220) ---
+     --bg: #060300; --bg-panel:#120a00; --fg:#ffd9a0;
+     --accent:#ffb000; --accent-2:#ffcf6b; --accent-3:#6b4400;
+     --dim:#9a7233; --border:#c98a00;
   */
 
   --font-display: 'VT323', 'Courier New', monospace;
@@ -40,10 +41,10 @@ body {
   font-size: 18px;
   line-height: 1.5;
   letter-spacing: 0.02em;
-  /* subtelny gradient vaporwave */
+  /* subtelna poświata fosforu w rogach kineskopu */
   background-image:
-    radial-gradient(circle at 20% 0%, rgba(255,44,232,0.10), transparent 45%),
-    radial-gradient(circle at 90% 20%, rgba(0,240,255,0.10), transparent 45%);
+    radial-gradient(circle at 20% 0%, rgba(0,230,60,0.09), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(125,255,143,0.06), transparent 45%);
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -173,8 +174,8 @@ body {
   background: var(--bg-panel);
   border: 2px solid var(--border);
   box-shadow:
-    4px 4px 0 rgba(0,240,255,0.25),
-    inset 0 0 24px rgba(138,43,226,0.15);
+    4px 4px 0 rgba(0,230,60,0.22),
+    inset 0 0 24px rgba(0,230,60,0.10);
   margin-bottom: 2.5rem;
 }
 
@@ -245,7 +246,7 @@ body {
   padding-top: 56.25%; /* 16:9 */
   border: 2px solid var(--border);
   background: #000;
-  box-shadow: 0 0 12px rgba(0,240,255,0.35);
+  box-shadow: 0 0 12px rgba(0,230,60,0.30);
 }
 .embed-frame iframe {
   position: absolute;
@@ -282,7 +283,10 @@ body {
   text-align: center;
 }
 .site-footer .panel-title {
-  background: var(--accent-3);
+  /* nie reverse-video jak pozostałe tytuły: jasny napis w ramce,
+     bo ciemne tło + ciemny tekst byłyby nieczytelne */
+  background: transparent;
+  color: var(--accent-2);
   display: inline-block;
   border: 2px solid var(--border);
 }
