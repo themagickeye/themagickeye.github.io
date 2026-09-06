@@ -88,16 +88,6 @@ body {
   margin-bottom: 2rem;
 }
 
-.ascii-logo {
-  color: var(--accent-2);
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  line-height: 1.1;
-  margin: 0 0 1rem;
-  text-shadow: 0 0 6px var(--accent-2);
-  overflow-x: auto;
-}
-
 .band-name {
   font-family: var(--font-display);
   font-size: clamp(3rem, 12vw, 6rem);
@@ -327,4 +317,96 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .glitch::before, .glitch::after { animation: none; }
   html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   PIECZĘĆ: heksagram unikursalny + Oko (vesica piscis)
+   Geometria wg pliku referencyjnego z Wikimedia Commons:
+   sześć odcinków, jedna domknięta ścieżka, cztery punkty
+   boczne ściągnięte do wewnątrz (r≈0.93, kąt 27°) — dzięki
+   temu tylko dwa odcinki przechodzą przez środek.
+   Ścieżkę zrasteryzowano na siatce 41×41; każdy piksel to
+   osobny <rect> zapalany z opóźnieniem --i × 14ms, więc
+   pieczęć rysuje się JEDNĄ kreską, tak jak każe jej nazwa.
+   ============================================================ */
+
+.seal-wrap { margin: 0 0 1.75rem; }
+
+.seal {
+  display: block;
+  width: min(300px, 64vw);
+  height: auto;
+  margin: 0 auto 1rem;
+  shape-rendering: crispEdges;          /* bez wygładzania = piksele */
+  filter: drop-shadow(0 0 3px rgba(0,230,60,0.45));
+}
+
+/* --- ślad wiązki: rozbłysk, potem stygnięcie do barwy fosforu --- */
+.seal-trace rect {
+  opacity: 0;
+  animation: seal-trace 900ms linear both;
+  animation-delay: calc(var(--i) * 14ms);
+}
+@keyframes seal-trace {
+  0%   { opacity: 0; fill: #eaffea; }
+  6%   { opacity: 1; fill: #eaffea; }   /* czoło wiązki — prawie białe */
+  100% { opacity: 1; fill: var(--accent); }
+}
+
+/* --- Oko otwiera się, gdy pieczęć się domknie (181 × 14ms) --- */
+.seal-eye {
+  opacity: 0;
+  animation: seal-eye 900ms ease-out both;
+  animation-delay: 2534ms;
+}
+@keyframes seal-eye { from { opacity: 0; } to { opacity: 1; } }
+
+.seal-eye .lens  { fill: var(--bg); }        /* wnętrze zasłania przekątne */
+.seal-eye .edge  { fill: var(--accent-2); }
+.seal-eye .pupil { fill: var(--fg); }
+
+/* ---------- Pasek inwokacji (składnia terminala Hermesa) ---------- */
+.invocation {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--dim);
+  max-width: 44ch;
+  margin: 0 auto;
+  text-align: left;
+  letter-spacing: 0.04em;
+}
+.inv-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6ch;
+  white-space: nowrap;
+  padding: 0.1rem 0;
+}
+.inv-rule {
+  flex: 1;
+  height: 0;
+  border-top: 1px solid var(--accent-3);
+  margin-left: 0.4ch;
+}
+.invocation .gl { color: var(--accent-2); }
+
+/* 11 pól paska — bo K jest jedenastą literą alfabetu */
+.bar { color: var(--accent-3); letter-spacing: 0; }
+.bar-cell {
+  color: var(--accent-3);
+  animation: seal-cell 1ms linear both;
+  animation-delay: calc(var(--i) * 230ms);
+}
+@keyframes seal-cell { to { color: var(--accent); } }
+
+@media (max-width: 600px) {
+  .invocation { font-size: 0.68rem; }
+  .seal { width: min(230px, 68vw); }
+}
+
+/* Bez animacji: pieczęć od razu kompletna, Oko otwarte, pasek pełny */
+@media (prefers-reduced-motion: reduce) {
+  .seal-trace rect { animation: none; opacity: 1; fill: var(--accent); }
+  .seal-eye { animation: none; opacity: 1; }
+  .bar-cell { animation: none; color: var(--accent); }
 }
