@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="[META_OPIS_STRONY]">
-  <title>[NAZWA_ZESPOLU]</title>
+  <meta name="description" content="The Magick Eye — oficjalna strona zespołu. Rytuały, inkantacje, gnoza.">
+  <title>The Magick Eye</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <!-- ?v= przy każdej zmianie CSS: GitHub Pages podaje cache-control max-age=600,
+       więc bez tego wracający gość dostaje nowy HTML ze starym arkuszem -->
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <!-- Nakładka CRT: scanlines + winieta -->
@@ -205,18 +207,16 @@
           <rect x="20" y="0" width="1" height="1" style="--i:180"/>
           </g>
           <g class="seal-eye">
-          <rect class="lens" x="20" y="17" width="1" height="1"/>
-          <rect class="lens" x="17" y="18" width="3" height="1"/>
-          <rect class="lens" x="21" y="18" width="3" height="1"/>
-          <rect class="lens" x="15" y="19" width="4" height="1"/>
-          <rect class="lens" x="22" y="19" width="4" height="1"/>
-          <rect class="lens" x="14" y="20" width="4" height="1"/>
-          <rect class="lens" x="23" y="20" width="4" height="1"/>
-          <rect class="lens" x="15" y="21" width="4" height="1"/>
-          <rect class="lens" x="22" y="21" width="4" height="1"/>
-          <rect class="lens" x="17" y="22" width="3" height="1"/>
-          <rect class="lens" x="21" y="22" width="3" height="1"/>
-          <rect class="lens" x="20" y="23" width="1" height="1"/>
+          <rect class="lens" x="17" y="18" width="1" height="1"/>
+          <rect class="lens" x="23" y="18" width="1" height="1"/>
+          <rect class="lens" x="15" y="19" width="3" height="1"/>
+          <rect class="lens" x="23" y="19" width="3" height="1"/>
+          <rect class="lens" x="14" y="20" width="3" height="1"/>
+          <rect class="lens" x="24" y="20" width="3" height="1"/>
+          <rect class="lens" x="15" y="21" width="3" height="1"/>
+          <rect class="lens" x="23" y="21" width="3" height="1"/>
+          <rect class="lens" x="17" y="22" width="1" height="1"/>
+          <rect class="lens" x="23" y="22" width="1" height="1"/>
           <rect class="edge" x="20" y="16" width="1" height="1"/>
           <rect class="edge" x="16" y="17" width="4" height="1"/>
           <rect class="edge" x="21" y="17" width="4" height="1"/>
@@ -233,30 +233,32 @@
           <rect class="edge" x="16" y="23" width="4" height="1"/>
           <rect class="edge" x="21" y="23" width="4" height="1"/>
           <rect class="edge" x="20" y="24" width="1" height="1"/>
-          <rect class="pupil" x="20" y="18" width="1" height="1"/>
-          <rect class="pupil" x="19" y="19" width="3" height="1"/>
-          <rect class="pupil" x="18" y="20" width="5" height="1"/>
-          <rect class="pupil" x="19" y="21" width="3" height="1"/>
-          <rect class="pupil" x="20" y="22" width="1" height="1"/>
+          <rect class="pupil" x="20" y="17" width="1" height="1"/>
+          <rect class="pupil" x="18" y="18" width="5" height="1"/>
+          <rect class="pupil" x="18" y="19" width="5" height="1"/>
+          <rect class="pupil" x="17" y="20" width="7" height="1"/>
+          <rect class="pupil" x="18" y="21" width="5" height="1"/>
+          <rect class="pupil" x="18" y="22" width="5" height="1"/>
+          <rect class="pupil" x="20" y="23" width="1" height="1"/>
           </g>
         </svg>
 
         <div class="invocation" aria-hidden="true">
-          <div class="inv-line"><span class="gl">☤</span> <span>[NAZWA_ZESPOLU]</span><i class="inv-rule"></i></div>
+          <div class="inv-line"><span class="gl">☤</span> <span>THE MAGICK EYE</span><i class="inv-rule"></i></div>
           <div class="inv-line"><span class="gl">⚕</span> <span>invocatio</span> │ <span>unicursal.seal</span> │ <span class="bar">[<span class="bar-cell" style="--i:0">█</span><span class="bar-cell" style="--i:1">█</span><span class="bar-cell" style="--i:2">█</span><span class="bar-cell" style="--i:3">█</span><span class="bar-cell" style="--i:4">█</span><span class="bar-cell" style="--i:5">█</span><span class="bar-cell" style="--i:6">█</span><span class="bar-cell" style="--i:7">█</span><span class="bar-cell" style="--i:8">█</span><span class="bar-cell" style="--i:9">█</span><span class="bar-cell" style="--i:10">█</span>]</span> <span>11/11</span></div>
         </div>
       </div>
-      <h1 class="band-name glitch" data-text="[NAZWA_ZESPOLU]">[NAZWA_ZESPOLU]</h1>
+      <h1 class="band-name glitch" data-text="The Magick Eye">The Magick Eye</h1>
       <p class="tagline">[SLOGAN_LUB_GATUNEK]</p>
 
       <nav class="main-nav">
-        <a href="#info">[NAV_INFO]</a>
-        <span class="sep">::</span>
-        <a href="#koncerty">[NAV_KONCERTY]</a>
-        <span class="sep">::</span>
-        <a href="#media">[NAV_MEDIA]</a>
-        <span class="sep">::</span>
-        <a href="#kontakt">[NAV_KONTAKT]</a>
+        <a href="#info">GNOZA</a>
+        <span class="sep">☤</span>
+        <a href="#koncerty">RYTUAŁY</a>
+        <span class="sep">☤</span>
+        <a href="#media">INKANTACJE</a>
+        <span class="sep">☤</span>
+        <a href="#kontakt">TELEPATIA</a>
       </nav>
     </header>
 
@@ -264,7 +266,7 @@
 
       <!-- ============ SEKCJA: INFORMACJE OGÓLNE ============ -->
       <section class="panel" id="info">
-        <h2 class="panel-title">&gt; [TYTUL_INFO_OGOLNE]</h2>
+        <h2 class="panel-title">☤ GNOZA</h2>
         <div class="panel-body">
           <p class="info-text">[TEKST_OPISOWY_ZESPOLU]</p>
           <p class="info-text">[TEKST_OPISOWY_UZUPELNIAJACY]</p>
@@ -279,7 +281,7 @@
 
       <!-- ============ SEKCJA: NADCHODZĄCE KONCERTY ============ -->
       <section class="panel" id="koncerty">
-        <h2 class="panel-title">&gt; [TYTUL_KONCERTY]</h2>
+        <h2 class="panel-title">☤ RYTUAŁY</h2>
         <div class="panel-body">
           <ul class="gig-list">
 
@@ -313,7 +315,7 @@
 
       <!-- ============ SEKCJA: LINKI AUDIO / WIDEO ============ -->
       <section class="panel" id="media">
-        <h2 class="panel-title">&gt; [TYTUL_MEDIA]</h2>
+        <h2 class="panel-title">☤ INKANTACJE</h2>
         <div class="panel-body">
 
           <div class="media-grid">
@@ -322,34 +324,37 @@
             <figure class="media-item">
               <div class="embed-frame">
                 <iframe
-                  src="[LINK_YOUTUBE_EMBED]"
-                  title="[TYTUL_WIDEO]"
+                  src="https://www.youtube-nocookie.com/embed/VPgYBkS7AfU"
+                  title="MAGICK EYE EXORCIST3"
                   loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen></iframe>
               </div>
-              <figcaption>[PODPIS_WIDEO]</figcaption>
+              <figcaption>MAGICK EYE EXORCIST3</figcaption>
             </figure>
 
-            <!-- Osadzone audio (np. Bandcamp / SoundCloud / Spotify) -->
+            <!-- Drugi film. Gdy pojawi się wydawnictwo na Bandcampie, podmień
+                 ten blok na ich embed:
+                 <iframe src="https://bandcamp.com/EmbeddedPlayer/album=ID/size=large/"
+                         seamless></iframe> -->
             <figure class="media-item">
               <div class="embed-frame">
                 <iframe
-                  src="[LINK_AUDIO_EMBED]"
-                  title="[TYTUL_AUDIO]"
+                  src="https://www.youtube-nocookie.com/embed/vtoTzxzXvSE"
+                  title="THE MAGICK EYE SERPENTS LIVE"
                   loading="lazy"
-                  allow="autoplay; encrypted-media"></iframe>
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
               </div>
-              <figcaption>[PODPIS_AUDIO]</figcaption>
+              <figcaption>THE MAGICK EYE SERPENTS LIVE</figcaption>
             </figure>
 
           </div>
 
           <ul class="link-list">
-            <li><a href="[LINK_SPOTIFY]">&gt; [ETYKIETA_SPOTIFY]</a></li>
-            <li><a href="[LINK_BANDCAMP]">&gt; [ETYKIETA_BANDCAMP]</a></li>
-            <li><a href="[LINK_SOUNDCLOUD]">&gt; [ETYKIETA_SOUNDCLOUD]</a></li>
-            <li><a href="[LINK_YOUTUBE_KANAL]">&gt; [ETYKIETA_YOUTUBE]</a></li>
+            <li><a href="https://themagickeye.bandcamp.com/">&gt; BANDCAMP</a></li>
+            <li><a href="https://www.youtube.com/@TheMagickEye">&gt; YOUTUBE</a></li>
+            <li><a href="https://www.instagram.com/themagickeye/">&gt; INSTAGRAM</a></li>
           </ul>
 
         </div>
@@ -359,19 +364,22 @@
 
     <!-- ============ STOPKA KONTAKTOWA ============ -->
     <footer class="site-footer" id="kontakt">
-      <h2 class="panel-title">&gt; [TYTUL_KONTAKT]</h2>
+      <h2 class="panel-title">☤ TELEPATIA</h2>
       <div class="footer-body">
-        <p><span class="stat-key">[ETYKIETA_EMAIL]:</span> <a href="mailto:[ADRES_EMAIL]">[ADRES_EMAIL]</a></p>
-        <p><span class="stat-key">[ETYKIETA_BOOKING]:</span> <a href="mailto:[ADRES_EMAIL_BOOKING]">[ADRES_EMAIL_BOOKING]</a></p>
+        <p><span class="stat-key">KONTAKT:</span> <a href="mailto:themagickeye@gmail.com">themagickeye@gmail.com</a></p>
 
         <ul class="social-list">
-          <li><a href="[LINK_INSTAGRAM]">[SOC_INSTAGRAM]</a></li>
-          <li><a href="[LINK_FACEBOOK]">[SOC_FACEBOOK]</a></li>
-          <li><a href="[LINK_BANDCAMP]">[SOC_BANDCAMP]</a></li>
-          <li><a href="[LINK_INNY]">[SOC_INNY]</a></li>
+          <li><a href="https://www.instagram.com/themagickeye/">INSTAGRAM</a></li>
+          <li><a href="https://themagickeye.bandcamp.com/">BANDCAMP</a></li>
+          <li><a href="https://www.youtube.com/@TheMagickEye">YOUTUBE</a></li>
         </ul>
 
-        <p class="copyright">&copy; [ROK] [NAZWA_ZESPOLU] // [NOTKA_STOPKI]</p>
+        <div class="invocation eof" aria-hidden="true">
+          <div class="inv-line"><span class="gl">☤</span> <span>EOF</span><i class="inv-rule"></i></div>
+          <div class="inv-line"><span class="gl">⚕</span> <span>static</span> │ <span>0 js</span> │ <span>seal 181 px</span> │ <span>1 stroke</span></div>
+        </div>
+
+        <p class="copyright">&copy; 2026 The Magick Eye // 93 93/93</p>
       </div>
     </footer>
 

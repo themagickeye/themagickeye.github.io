@@ -361,9 +361,11 @@ body {
 }
 @keyframes seal-eye { from { opacity: 0; } to { opacity: 1; } }
 
-.seal-eye .lens  { fill: var(--bg); }        /* wnętrze zasłania przekątne */
+/* Oko: wnętrze świeci, źrenica jest ciemną pustką — trzy różne
+   poziomy jasności zamiast dwóch prawie identycznych zieleni */
+.seal-eye .lens  { fill: var(--accent); }
 .seal-eye .edge  { fill: var(--accent-2); }
-.seal-eye .pupil { fill: var(--fg); }
+.seal-eye .pupil { fill: var(--bg); }
 
 /* ---------- Pasek inwokacji (składnia terminala Hermesa) ---------- */
 .invocation {
@@ -410,3 +412,7 @@ body {
   .seal-eye { animation: none; opacity: 1; }
   .bar-cell { animation: none; color: var(--accent); }
 }
+
+/* Blok EOF w stopce — klamra dla inwokacji z nagłówka.
+   Liczby są prawdziwe: 181 pikseli ścieżki, jedna kreska, zero JS. */
+.invocation.eof { margin-top: 1.75rem; }
