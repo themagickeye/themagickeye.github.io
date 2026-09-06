@@ -1,0 +1,326 @@
+/* ============================================================
+   [NAZWA_ZESPOLU] — retro / vaporwave / CRT
+   Czysty CSS. Zero frameworków. Pod GitHub Pages.
+   Paleta: vaporwave (cyjan / róż / fiolet) na czerni.
+   Aby przełączyć na terminal (zieleń/bursztyn) — patrz sekcja
+   :root i podmień zmienne.
+   ============================================================ */
+
+:root {
+  /* --- Paleta vaporwave (domyślna) --- */
+  --bg:        #0d0221;   /* głęboki fiolet-czerń */
+  --bg-panel:  #170a2e;
+  --fg:        #f6f6f6;
+  --accent:    #ff2ce8;   /* róż neon */
+  --accent-2:  #00f0ff;   /* cyjan */
+  --accent-3:  #8a2be2;   /* fiolet */
+  --dim:       #7a6ea3;
+  --border:    #00f0ff;
+
+  /* --- Alternatywa: terminal bursztyn/zieleń ---
+     --bg: #0a0a0a; --bg-panel:#0f0f0f; --fg:#e0ffe0;
+     --accent:#33ff66; --accent-2:#ffb000; --accent-3:#33ff66;
+     --dim:#3a6a3a; --border:#33ff66;
+  */
+
+  --font-display: 'VT323', 'Courier New', monospace;
+  --font-body:    'Share Tech Mono', 'Courier New', monospace;
+  --maxw: 960px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  /* subtelny gradient vaporwave */
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(255,44,232,0.10), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(0,240,255,0.10), transparent 45%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* ---------- Nakładka CRT: scanlines + winieta ---------- */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.0) 0px,
+      rgba(0,0,0,0.0) 2px,
+      rgba(0,0,0,0.25) 3px,
+      rgba(0,0,0,0.25) 3px
+    );
+  mix-blend-mode: multiply;
+}
+.crt-overlay::after {
+  /* winieta / lekkie zaokrąglenie kineskopu */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ---------- Kontener ekranu ---------- */
+.screen {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* ---------- Nagłówek / hero ---------- */
+.site-header {
+  text-align: center;
+  padding: 2rem 0 1.5rem;
+  border-bottom: 3px double var(--border);
+  margin-bottom: 2rem;
+}
+
+.ascii-logo {
+  color: var(--accent-2);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  line-height: 1.1;
+  margin: 0 0 1rem;
+  text-shadow: 0 0 6px var(--accent-2);
+  overflow-x: auto;
+}
+
+.band-name {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 12vw, 6rem);
+  margin: 0.25rem 0;
+  color: var(--fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.tagline {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-size: 0.9rem;
+  margin: 0.5rem 0 1.5rem;
+  text-shadow: 0 0 8px var(--accent);
+}
+
+/* ---------- Efekt glitch na nazwie ---------- */
+.glitch { position: relative; }
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+.glitch::before {
+  color: var(--accent);
+  transform: translate(-2px, 0);
+  clip-path: inset(0 0 55% 0);
+  animation: glitch-top 2.6s infinite steps(2, jump-none);
+}
+.glitch::after {
+  color: var(--accent-2);
+  transform: translate(2px, 0);
+  clip-path: inset(55% 0 0 0);
+  animation: glitch-bot 3.1s infinite steps(2, jump-none);
+}
+@keyframes glitch-top {
+  0%, 92%, 100% { transform: translate(0,0); }
+  93% { transform: translate(-3px,-1px); }
+  97% { transform: translate(2px,1px); }
+}
+@keyframes glitch-bot {
+  0%, 90%, 100% { transform: translate(0,0); }
+  91% { transform: translate(3px,1px); }
+  95% { transform: translate(-2px,-1px); }
+}
+
+/* ---------- Nawigacja ---------- */
+.main-nav {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  text-transform: uppercase;
+}
+.main-nav a {
+  color: var(--accent-2);
+  text-decoration: none;
+  padding: 0 0.35rem;
+}
+.main-nav a:hover,
+.main-nav a:focus {
+  color: var(--bg);
+  background: var(--accent-2);
+  outline: none;
+}
+.main-nav .sep { color: var(--dim); }
+
+/* ---------- Panele / kontenery ---------- */
+.panel {
+  background: var(--bg-panel);
+  border: 2px solid var(--border);
+  box-shadow:
+    4px 4px 0 rgba(0,240,255,0.25),
+    inset 0 0 24px rgba(138,43,226,0.15);
+  margin-bottom: 2.5rem;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  margin: 0;
+  padding: 0.35rem 1rem;
+  color: var(--bg);
+  background: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border);
+}
+
+.panel-body { padding: 1.25rem 1.5rem 1.75rem; }
+
+.info-text { margin: 0 0 1rem; }
+
+/* ---------- Lista statystyk / meta ---------- */
+.stat-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.stat-list li { padding: 0.15rem 0; border-bottom: 1px dashed var(--dim); }
+.stat-key { color: var(--accent-2); text-transform: uppercase; }
+.stat-val { color: var(--fg); }
+
+/* ---------- Lista koncertów ---------- */
+.gig-list { list-style: none; margin: 0; padding: 0; }
+.gig {
+  display: grid;
+  grid-template-columns: 9rem 1fr auto auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--accent-3);
+}
+.gig-date {
+  color: var(--accent-2);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+.gig-venue { color: var(--fg); font-weight: bold; }
+.gig-city  { color: var(--dim); }
+.gig-link {
+  color: var(--bg);
+  background: var(--accent-2);
+  text-decoration: none;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.gig-link:hover, .gig-link:focus { background: var(--accent); outline: none; }
+
+.empty-note { color: var(--dim); margin-top: 1rem; font-style: italic; }
+
+/* ---------- Media (audio / wideo) ---------- */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.media-item { margin: 0; }
+.embed-frame {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 */
+  border: 2px solid var(--border);
+  background: #000;
+  box-shadow: 0 0 12px rgba(0,240,255,0.35);
+}
+.embed-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.media-item figcaption {
+  margin-top: 0.5rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+/* ---------- Lista linków ---------- */
+.link-list { list-style: none; margin: 0; padding: 0; }
+.link-list li { padding: 0.2rem 0; }
+.link-list a {
+  color: var(--accent-2);
+  text-decoration: none;
+}
+.link-list a:hover, .link-list a:focus {
+  color: var(--accent);
+  text-decoration: underline;
+  outline: none;
+}
+
+/* ---------- Stopka ---------- */
+.site-footer {
+  border-top: 3px double var(--border);
+  padding-top: 1.5rem;
+  text-align: center;
+}
+.site-footer .panel-title {
+  background: var(--accent-3);
+  display: inline-block;
+  border: 2px solid var(--border);
+}
+.footer-body { padding: 1.25rem 0.5rem; }
+.footer-body a { color: var(--accent-2); text-decoration: none; }
+.footer-body a:hover, .footer-body a:focus { color: var(--accent); text-decoration: underline; }
+
+.social-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+}
+.social-list a {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.copyright { color: var(--dim); font-size: 0.85rem; margin-top: 1.5rem; }
+
+/* ---------- Responsywność ---------- */
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .gig {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+  .gig-link { justify-self: start; margin-top: 0.35rem; }
+  .main-nav { font-size: 1.15rem; }
+  .main-nav .sep { display: none; }
+  .main-nav a { display: inline-block; padding: 0.15rem 0.5rem; }
+}
+
+/* ---------- Dostępność: redukcja ruchu ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before, .glitch::after { animation: none; }
+  html { scroll-behavior: auto; }
+}

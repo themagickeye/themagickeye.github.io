@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="[META_OPIS_STRONY]">
+  <title>[NAZWA_ZESPOLU]</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Nakładka CRT: scanlines + winieta -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <div class="screen">
+
+    <!-- ============ NAGŁÓWEK / HERO ============ -->
+    <header class="site-header" id="top">
+      <pre class="ascii-logo" aria-hidden="true">
+ ┌───────────────────────────────┐
+ │   ▓▓▓  SYSTEM ONLINE  ▓▓▓      │
+ └───────────────────────────────┘
+      </pre>
+      <h1 class="band-name glitch" data-text="[NAZWA_ZESPOLU]">[NAZWA_ZESPOLU]</h1>
+      <p class="tagline">[SLOGAN_LUB_GATUNEK]</p>
+
+      <nav class="main-nav">
+        <a href="#info">[NAV_INFO]</a>
+        <span class="sep">::</span>
+        <a href="#koncerty">[NAV_KONCERTY]</a>
+        <span class="sep">::</span>
+        <a href="#media">[NAV_MEDIA]</a>
+        <span class="sep">::</span>
+        <a href="#kontakt">[NAV_KONTAKT]</a>
+      </nav>
+    </header>
+
+    <main>
+
+      <!-- ============ SEKCJA: INFORMACJE OGÓLNE ============ -->
+      <section class="panel" id="info">
+        <h2 class="panel-title">&gt; [TYTUL_INFO_OGOLNE]</h2>
+        <div class="panel-body">
+          <p class="info-text">[TEKST_OPISOWY_ZESPOLU]</p>
+          <p class="info-text">[TEKST_OPISOWY_UZUPELNIAJACY]</p>
+
+          <ul class="stat-list">
+            <li><span class="stat-key">[KLUCZ_1]:</span> <span class="stat-val">[WARTOSC_1]</span></li>
+            <li><span class="stat-key">[KLUCZ_2]:</span> <span class="stat-val">[WARTOSC_2]</span></li>
+            <li><span class="stat-key">[KLUCZ_3]:</span> <span class="stat-val">[WARTOSC_3]</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ SEKCJA: NADCHODZĄCE KONCERTY ============ -->
+      <section class="panel" id="koncerty">
+        <h2 class="panel-title">&gt; [TYTUL_KONCERTY]</h2>
+        <div class="panel-body">
+          <ul class="gig-list">
+
+            <!-- POWIEL ten <li> dla każdego koncertu -->
+            <li class="gig">
+              <span class="gig-date">[DATA_KONCERTU]</span>
+              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
+              <span class="gig-city">[MIASTO_KONCERTU]</span>
+              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+            </li>
+
+            <li class="gig">
+              <span class="gig-date">[DATA_KONCERTU]</span>
+              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
+              <span class="gig-city">[MIASTO_KONCERTU]</span>
+              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+            </li>
+
+            <li class="gig">
+              <span class="gig-date">[DATA_KONCERTU]</span>
+              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
+              <span class="gig-city">[MIASTO_KONCERTU]</span>
+              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+            </li>
+            <!-- /koniec powielanego bloku -->
+
+          </ul>
+          <p class="empty-note">[KOMUNIKAT_BRAK_KONCERTOW]</p>
+        </div>
+      </section>
+
+      <!-- ============ SEKCJA: LINKI AUDIO / WIDEO ============ -->
+      <section class="panel" id="media">
+        <h2 class="panel-title">&gt; [TYTUL_MEDIA]</h2>
+        <div class="panel-body">
+
+          <div class="media-grid">
+
+            <!-- Osadzone wideo (np. YouTube) -->
+            <figure class="media-item">
+              <div class="embed-frame">
+                <iframe
+                  src="[LINK_YOUTUBE_EMBED]"
+                  title="[TYTUL_WIDEO]"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <figcaption>[PODPIS_WIDEO]</figcaption>
+            </figure>
+
+            <!-- Osadzone audio (np. Bandcamp / SoundCloud / Spotify) -->
+            <figure class="media-item">
+              <div class="embed-frame">
+                <iframe
+                  src="[LINK_AUDIO_EMBED]"
+                  title="[TYTUL_AUDIO]"
+                  loading="lazy"
+                  allow="autoplay; encrypted-media"></iframe>
+              </div>
+              <figcaption>[PODPIS_AUDIO]</figcaption>
+            </figure>
+
+          </div>
+
+          <ul class="link-list">
+            <li><a href="[LINK_SPOTIFY]">&gt; [ETYKIETA_SPOTIFY]</a></li>
+            <li><a href="[LINK_BANDCAMP]">&gt; [ETYKIETA_BANDCAMP]</a></li>
+            <li><a href="[LINK_SOUNDCLOUD]">&gt; [ETYKIETA_SOUNDCLOUD]</a></li>
+            <li><a href="[LINK_YOUTUBE_KANAL]">&gt; [ETYKIETA_YOUTUBE]</a></li>
+          </ul>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============ STOPKA KONTAKTOWA ============ -->
+    <footer class="site-footer" id="kontakt">
+      <h2 class="panel-title">&gt; [TYTUL_KONTAKT]</h2>
+      <div class="footer-body">
+        <p><span class="stat-key">[ETYKIETA_EMAIL]:</span> <a href="mailto:[ADRES_EMAIL]">[ADRES_EMAIL]</a></p>
+        <p><span class="stat-key">[ETYKIETA_BOOKING]:</span> <a href="mailto:[ADRES_EMAIL_BOOKING]">[ADRES_EMAIL_BOOKING]</a></p>
+
+        <ul class="social-list">
+          <li><a href="[LINK_INSTAGRAM]">[SOC_INSTAGRAM]</a></li>
+          <li><a href="[LINK_FACEBOOK]">[SOC_FACEBOOK]</a></li>
+          <li><a href="[LINK_BANDCAMP]">[SOC_BANDCAMP]</a></li>
+          <li><a href="[LINK_INNY]">[SOC_INNY]</a></li>
+        </ul>
+
+        <p class="copyright">&copy; [ROK] [NAZWA_ZESPOLU] // [NOTKA_STOPKI]</p>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
