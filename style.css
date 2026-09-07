@@ -416,3 +416,41 @@ body {
 /* Blok EOF w stopce — klamra dla inwokacji z nagłówka.
    Liczby są prawdziwe: 181 pikseli ścieżki, jedna kreska, zero JS. */
 .invocation.eof { margin-top: 1.75rem; }
+
+/* ---------- Przełącznik wersji językowej ----------
+   Dwie osobne strony statyczne (/ i /en/), nie przełączanie
+   JavaScriptem — stopka chwali się "0 js" i ma to zostać prawdą.
+   Bez flag: flaga oznacza kraj, nie język, a emoji są pełnokolorowe
+   i rozbiłyby monochrom fosforu. Aktywny język w negatywie, jak
+   paski tytułów sekcji. */
+.lang-switch {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.6ch;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  margin-bottom: -0.5rem;   /* wchodzi w padding nagłówka, nie odpycha pieczęci */
+}
+.lang-switch .lang-label { text-transform: uppercase; }
+.lang-switch .lang-sep   { color: var(--accent-3); }
+
+.lang-switch .lang-cur {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0 0.5ch;
+}
+.lang-switch a {
+  color: var(--dim);
+  text-decoration: none;
+  padding: 0 0.5ch;
+  border: 1px solid transparent;
+}
+.lang-switch a:hover,
+.lang-switch a:focus {
+  color: var(--bg);
+  background: var(--accent-2);
+  outline: none;
+}
