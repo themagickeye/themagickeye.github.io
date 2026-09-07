@@ -13,7 +13,7 @@
   <link rel="alternate" hreflang="pl" href="https://themagickeye.github.io/">
   <link rel="alternate" hreflang="en" href="https://themagickeye.github.io/en/">
   <link rel="alternate" hreflang="x-default" href="https://themagickeye.github.io/">
-  <link rel="stylesheet" href="../style.css?v=4">
+  <link rel="stylesheet" href="../style.css?v=5">
 </head>
 <body>
   <!-- Nakładka CRT: scanlines + winieta -->
@@ -259,7 +259,7 @@
         </div>
       </div>
       <h1 class="band-name glitch" data-text="The Magick Eye">The Magick Eye</h1>
-      <p class="tagline">[SLOGAN_LUB_GATUNEK]</p>
+      <p class="tagline">Psycho Punk / Grunge</p>
 
       <nav class="main-nav">
         <a href="#info">GNOSIS</a>
@@ -278,14 +278,7 @@
       <section class="panel" id="info">
         <h2 class="panel-title">☤ GNOSIS</h2>
         <div class="panel-body">
-          <p class="info-text">[TEKST_OPISOWY_ZESPOLU]</p>
-          <p class="info-text">[TEKST_OPISOWY_UZUPELNIAJACY]</p>
-
-          <ul class="stat-list">
-            <li><span class="stat-key">[KLUCZ_1]:</span> <span class="stat-val">[WARTOSC_1]</span></li>
-            <li><span class="stat-key">[KLUCZ_2]:</span> <span class="stat-val">[WARTOSC_2]</span></li>
-            <li><span class="stat-key">[KLUCZ_3]:</span> <span class="stat-val">[WARTOSC_3]</span></li>
-          </ul>
+          <p class="info-text">A band from Poznań.</p>
         </div>
       </section>
 
@@ -294,32 +287,27 @@
         <h2 class="panel-title">☤ RITES</h2>
         <div class="panel-body">
           <ul class="gig-list">
-
-            <!-- POWIEL ten <li> dla każdego koncertu -->
             <li class="gig">
-              <span class="gig-date">[DATA_KONCERTU]</span>
-              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
-              <span class="gig-city">[MIASTO_KONCERTU]</span>
-              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+              <span class="gig-date">20 Sep 2026</span>
+              <span class="gig-venue">Fort II — live session</span>
+              <span class="gig-city">Poznań</span>
             </li>
-
             <li class="gig">
-              <span class="gig-date">[DATA_KONCERTU]</span>
-              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
-              <span class="gig-city">[MIASTO_KONCERTU]</span>
-              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+              <span class="gig-date">16 Oct 2026</span>
+              <span class="gig-venue">Klub Baza</span>
+              <span class="gig-city">Kraków</span>
             </li>
-
             <li class="gig">
-              <span class="gig-date">[DATA_KONCERTU]</span>
-              <span class="gig-venue">[MIEJSCE_KONCERTU]</span>
-              <span class="gig-city">[MIASTO_KONCERTU]</span>
-              <a class="gig-link" href="[LINK_BILETY]">[ETYKIETA_BILETY]</a>
+              <span class="gig-date">17 Oct 2026</span>
+              <span class="gig-venue">Dom Technika</span>
+              <span class="gig-city">Poznań</span>
             </li>
-            <!-- /koniec powielanego bloku -->
-
+            <li class="gig">
+              <span class="gig-date">17 Dec 2026</span>
+              <span class="gig-venue">Klub Chmury</span>
+              <span class="gig-city">Warsaw</span>
+            </li>
           </ul>
-          <p class="empty-note">[KOMUNIKAT_BRAK_KONCERTOW]</p>
         </div>
       </section>
 
@@ -328,25 +316,35 @@
         <h2 class="panel-title">☤ INCANTATIONS</h2>
         <div class="panel-body">
 
+          <!-- Cztery filmy z kanału, od najnowszego. Gdy pojawi się
+               wydawnictwo na Bandcampie, można dołożyć piątą kafelkę:
+               <iframe src="https://bandcamp.com/EmbeddedPlayer/album=ID/size=large/"
+                       seamless></iframe> -->
           <div class="media-grid">
-
-            <!-- Osadzone wideo (np. YouTube) -->
             <figure class="media-item">
               <div class="embed-frame">
                 <iframe
                   src="https://www.youtube-nocookie.com/embed/VPgYBkS7AfU"
-                  title="MAGICK EYE EXORCIST3"
+                  title="MAGICK EYE EXORCIST"
                   loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen></iframe>
               </div>
-              <figcaption>MAGICK EYE EXORCIST3</figcaption>
+              <figcaption>MAGICK EYE EXORCIST</figcaption>
             </figure>
 
-            <!-- Drugi film. Gdy pojawi się wydawnictwo na Bandcampie, podmień
-                 ten blok na ich embed:
-                 <iframe src="https://bandcamp.com/EmbeddedPlayer/album=ID/size=large/"
-                         seamless></iframe> -->
+            <figure class="media-item">
+              <div class="embed-frame">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/-E3nMMvoqH4"
+                  title="MAGICK EYE AUTOPILOT"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <figcaption>MAGICK EYE AUTOPILOT</figcaption>
+            </figure>
+
             <figure class="media-item">
               <div class="embed-frame">
                 <iframe
@@ -359,6 +357,17 @@
               <figcaption>THE MAGICK EYE SERPENTS LIVE</figcaption>
             </figure>
 
+            <figure class="media-item">
+              <div class="embed-frame">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/dfpaS46mE3Y"
+                  title="THE MAGICK EYE LIVE"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <figcaption>THE MAGICK EYE LIVE</figcaption>
+            </figure>
           </div>
 
           <ul class="link-list">

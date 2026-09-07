@@ -454,3 +454,17 @@ body {
   background: var(--accent-2);
   outline: none;
 }
+
+/* ---------- Kursor: pikselowa strzałka fosforu ----------
+   16x16 pikseli sztuki przeskalowane x2 metodą NEAREST, więc piksele
+   zostają ostre. Ciemny kontur jest konieczny, nie ozdobny: bez niego
+   zielona strzałka znika na jasnozielonych paskach tytułów sekcji.
+   Punkt kliknięcia to 0 0, czyli czubek. Za url() zawsze zostaje
+   słowo kluczowe — gdyby obrazek się nie wczytał, kursor działa dalej.
+   Na dotyku bez efektu; tam kursora po prostu nie ma. */
+body {
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAl0lEQVR42uXXwQ2AIAwF0NIY5mAO9w9zOIcH8GBqDJgYFWh/5MSBQ/valJTYc2bPmZQOk/I5AtCSUBeY5JKWeY8oxExElNbk/iWgJWFPYLSEXYFREvYFekvgCPSSwBNoLYEr0EoCX+CrBK4Ah/iTv0AylRpXtUefhE52gVMXX2ZWvquEUCehK7ehu0xaS+gLvO7eh3JmBTalDGb7nzDdTQAAAABJRU5ErkJggg==) 0 0, auto;
+}
+a, summary, button, [role="button"] {
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAlUlEQVR42uXXMQ6AIAwF0E9j4F5unNjNe+kATjWmMTEqUBo6MTC0j6akIE+ZPGUoBUE5zgS0JNQFJj4s2woAiGHOAJD25MYS0JLoT6C1RL8CrST6F6gtYUegloQ9gdISdgVKSdgX+CthVyCGeZC/gCvlN5ZhfhI63gUuXXxbmbwnhcxOQie3oadKSkvoC3zu3pdy3QocKthmpSeqo7MAAAAASUVORK5CYII=) 0 0, pointer;
+}
