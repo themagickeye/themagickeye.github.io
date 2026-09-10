@@ -5,15 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="The Magick Eye — oficjalna strona zespołu. Rytuały, inkantacje, gnoza.">
   <title>The Magick Eye</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- Share Tech Mono ma wyłącznie zakres latin (U+0000-00FF): jest w nim ó,
+       ale nie ma ł (U+0142) ani ń (U+0144). Bez tego przeglądarka brała je
+       z Courier New — szeryfowej i innej szerokości, stąd rozjazd w wyrazie.
+       Poniżej dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=),
+       więc plik waży tyle co nic. VT323 ma latin-ext i nie wymagała poprawki. -->
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
   <!-- ?v= przy każdej zmianie CSS: GitHub Pages podaje cache-control max-age=600,
        więc bez tego wracający gość dostaje nowy HTML ze starym arkuszem -->
   <link rel="alternate" hreflang="pl" href="https://themagickeye.github.io/">
   <link rel="alternate" hreflang="en" href="https://themagickeye.github.io/en/">
   <link rel="alternate" hreflang="x-default" href="https://themagickeye.github.io/">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
   <!-- Nakładka CRT: scanlines + winieta -->

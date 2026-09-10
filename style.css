@@ -25,7 +25,9 @@
   */
 
   --font-display: 'VT323', 'Courier New', monospace;
-  --font-body:    'Share Tech Mono', 'Courier New', monospace;
+  /* Anonymous Pro obsługuje tylko polskie znaki, których nie ma
+     Share Tech Mono — reszta tekstu zostaje bez zmian */
+  --font-body:    'Share Tech Mono', 'Anonymous Pro', 'Courier New', monospace;
   --maxw: 960px;
 }
 
