@@ -15,7 +15,7 @@
        Dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=). -->
   <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css?v=6">
-  <link rel="stylesheet" href="input-list.css?v=3">
+  <link rel="stylesheet" href="input-list.css?v=4">
 </head>
 <body>
   <div class="crt-overlay" aria-hidden="true"></div>
@@ -36,6 +36,9 @@
         <span class="meter-label">Kanały</span><span class="meter-val">–</span>
       </span>
       <span class="slots" id="slots-ch" aria-hidden="true"></span>
+      <span class="meter" id="meter-jacks" hidden>
+        <span class="meter-label">Wejścia</span><span class="meter-val">–</span>
+      </span>
       <span class="meter" id="meter-aux">
         <span class="meter-label">Zwrot aux</span><span class="meter-val">–</span>
       </span>
@@ -80,7 +83,7 @@
              pole do wypełnienia niż liczba wzięta z sufitu. -->
         <div class="gig-meta" id="cap-fields" hidden>
           <div class="field">
-            <label for="cap-ch">Kanałów wejściowych</label>
+            <label for="cap-ch">Kanałów (pasków)</label>
             <input type="number" id="cap-ch" min="1" max="128">
           </div>
           <div class="field">
@@ -296,7 +299,7 @@
     <section class="panel">
       <h2 class="panel-title">Lista wejściowa</h2>
       <div class="panel-body">
-        <div class="btn-row" style="margin-bottom:1rem">
+        <div class="btn-row" style="margin-bottom:1rem" id="align-wrap">
           <label class="ch-grp">
             <input type="checkbox" id="align"> wyrównuj pary stereo do granicy 1-2, 3-4, 5-6&nbsp;…
           </label>
@@ -470,6 +473,6 @@
   <div id="print-sheet" aria-hidden="true"></div>
 
   <div class="toast" id="toast" hidden role="status"></div>
-  <script src="input-list.js?v=3"></script>
+  <script src="input-list.js?v=4"></script>
 </body>
 </html>

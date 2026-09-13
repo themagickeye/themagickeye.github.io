@@ -19,10 +19,21 @@
    auxReturn = ile mono-slotów zwrotu USB (XR18: U17 i U18).
    verified  = czy pojemności pochodzą z pomiaru, czy z pamięci.
    ------------------------------------------------------------ */
+/* linksAdjacent = czy stereo trzeba sklejać z DWÓCH sąsiednich kanałów.
+   Na XR18 tak i tylko w parach 1-2, 3-4 … Na Wingu nie: instrukcja
+   (Firmware 3.1, sekcja 2.2) mówi wprost, że kanały 1-40 obsługują mono,
+   stereo i mid/side „without requiring adjacent channel linking", a busy
+   B1-B16 są stereo z natury. To zmienia rachunek: para stereo zjada tam
+   jeden kanał, nie dwa, i nie ma czego wyrównywać. */
 const TARGETS = {
-  xr18: { label: 'Behringer XR18', channels: 16, auxReturn: 2, buses: 6, locked: true,  verified: true  },
-  wing: { label: 'Behringer Wing', channels: 48, auxReturn: 8, buses: 16, locked: false, verified: false },
-  other:{ label: 'Inna konsola',   channels: 32, auxReturn: 2, buses: 8,  locked: false, verified: false }
+  xr18: { label: 'Behringer XR18', channels: 16, auxReturn: 2, buses: 6,
+          locked: true,  verified: true,  linksAdjacent: true  },
+  /* locked, bo liczby pochodzą z instrukcji, nie z pamięci — inaczej
+     starszy zapis (z błędnym 48) nadpisywałby je przy wczytaniu pliku. */
+  wing: { label: 'Behringer Wing', channels: 40, auxReturn: 8, buses: 16,
+          locked: true,  verified: true,  linksAdjacent: false },
+  other:{ label: 'Inna konsola',   channels: 32, auxReturn: 2, buses: 8,
+          locked: false, verified: false, linksAdjacent: true  }
 };
 
 /* ------------------------------------------------------------
@@ -247,26 +258,37 @@ function layout(state) {
 
   for (let i = 0; i < sources.length; i++) {
     const s = sources[i];
-    if (state.alignPairs && s.side === 'L' && n % 2 === 0) {
+    if (state.alignPairs && cap.linksAdjacent && s.side === 'L' && n % 2 === 0) {
       rows.push({ n: n++, spacer: true, name: '— wolne —' });
     }
     rows.push(Object.assign({ n: n++, spacer: false }, s));
   }
 
-  rows.forEach(r => { r.over = r.n > cap.channels; });
+  /* Na pulpicie bez sklejania para stereo siedzi na JEDNYM kanale, choć
+     wejścia fizyczne są dwa — liczymy więc osobno gniazda i osobno paski. */
+  const strips = cap.linksAdjacent
+    ? rows.length
+    : rows.filter(r => !r.spacer && r.side !== 'R').length;
+
+  if (cap.linksAdjacent) {
+    rows.forEach(r => { r.over = r.n > cap.channels; });
+  } else {
+    let used = 0;
+    rows.forEach(r => { if (r.side !== 'R') used++; r.over = used > cap.channels; });
+  }
 
   /* Linki: para aktywna, jeśli L wypadła na nieparzystym i R tuż za nią.
      Ręczne nadpisanie z state.links wygrywa — realizator może chcieć
      zlinkować coś, co logicznie parą nie jest (np. dwa wokale). */
   const links = {};
-  for (let i = 1; i <= cap.channels; i += 2) {
+  for (let i = 1; cap.linksAdjacent && i <= cap.channels; i += 2) {
     const a = rows.find(r => r.n === i), b = rows.find(r => r.n === i + 1);
     const auto = !!(a && b && a.pair && a.pair === b.pair && a.side === 'L');
     links[i] = (i in state.links) ? state.links[i] : auto;
     if (!b) links[i] = false;
   }
 
-  return { rows, links, auxRet: buildAuxReturn(state.src), cap, sources };
+  return { rows, links, strips, auxRet: buildAuxReturn(state.src), cap, sources };
 }
 
 function capacity(state) {
@@ -274,6 +296,7 @@ function capacity(state) {
   const c = state.cap || {};
   return {
     target:    state.target,
+    linksAdjacent: t.linksAdjacent,
     channels:  t.locked ? t.channels  : (c.channels  || t.channels),
     auxReturn: t.locked ? t.auxReturn : (c.auxReturn || t.auxReturn),
     buses:     t.locked ? t.buses     : (c.buses     || t.buses),
@@ -292,10 +315,11 @@ function layoutBuses(state) {
   const cap = capacity(state);
   const out = [];
   let n = 1;
+  const twoSlots = b => b.stereo && cap.linksAdjacent;
   state.buses.forEach((b, i) => {
-    if (b.stereo && n % 2 === 0) { out.push({ idx: -1, spacer: true, n: n++ }); }
-    const slots = b.stereo ? [n, n + 1] : [n];
-    n += b.stereo ? 2 : 1;
+    if (twoSlots(b) && n % 2 === 0) { out.push({ idx: -1, spacer: true, n: n++ }); }
+    const slots = twoSlots(b) ? [n, n + 1] : [n];
+    n += twoSlots(b) ? 2 : 1;
     out.push({ idx: i, bus: b, slots, over: slots[slots.length - 1] > cap.buses });
   });
   return { rows: out, used: n - 1, cap };
@@ -361,7 +385,13 @@ function autoFillP16(L, B) {
    ------------------------------------------------------------ */
 function warnings(state, L, B) {
   const w = [];
-  const usedCh = L.rows.length;
+  const usedCh = L.strips;
+
+  if (!L.cap.linksAdjacent) {
+    w.push({ lvl: 'info', html: '<b>' + esc(L.cap.label) + ':</b> kanały obsługują stereo bez sklejania ' +
+      'sąsiednich pasków, a busy są stereo z natury. Para zajmuje jeden kanał, choć gniazda są dwa — ' +
+      'stąd osobny licznik wejść. Wyrównywanie par jest tu bezprzedmiotowe i wyłączone.' });
+  }
 
   if (usedCh > L.cap.channels) {
     const over = L.rows.filter(r => r.over).map(r => r.name);
@@ -381,7 +411,7 @@ function warnings(state, L, B) {
 
   /* Para rozjechana mimo wszystko — zdarza się przy wyłączonym wyrównywaniu. */
   L.rows.forEach(r => {
-    if (r.side !== 'L' || r.spacer) return;
+    if (!L.cap.linksAdjacent || r.side !== 'L' || r.spacer) return;
     const next = L.rows.find(x => x.n === r.n + 1);
     const okPos = r.n % 2 === 1 && next && next.pair === r.pair;
     if (!okPos) {
@@ -506,15 +536,22 @@ function render() {
 }
 
 function renderMeters(L, B) {
-  const used = L.rows.length, cap = L.cap.channels;
+  const used = L.strips, cap = L.cap.channels;
   const m = $('#meter-ch');
   m.className = 'meter' + (used > cap ? ' over' : used === cap ? ' full' : '');
   m.querySelector('.meter-val').textContent = used + ' / ' + cap;
 
+  /* Gdy para stereo siedzi na jednym pasku, liczba gniazd i liczba kanałów
+     się rozjeżdża — realizator wozi tyle kabli, ile gniazd. */
+  const jacks = L.rows.filter(r => !r.spacer).length;
+  $('#meter-jacks').hidden = jacks === used;
+  $('#meter-jacks').querySelector('.meter-val').textContent = jacks;
+
   const boxes = [];
   const total = Math.max(cap, used);
+  const strip = L.cap.linksAdjacent ? L.rows : L.rows.filter(r => r.side !== 'R');
   for (let i = 1; i <= total; i++) {
-    const r = L.rows.find(x => x.n === i);
+    const r = L.cap.linksAdjacent ? L.rows.find(x => x.n === i) : strip[i - 1];
     let cls = 'slot-box';
     if (i > cap) cls += ' over';
     else if (r && r.spacer) cls += ' spacer';
@@ -545,7 +582,7 @@ function renderChannels(L) {
     const cls = [r.over ? 'over' : '', linked ? 'linked' : ''].filter(Boolean).join(' ');
     let link = '';
     const next = L.rows.find(x => x.n === r.n + 1);
-    if (r.n % 2 === 1 && next && r.n < L.cap.channels) {
+    if (L.cap.linksAdjacent && r.n % 2 === 1 && next && r.n < L.cap.channels) {
       link = '<label><input type="checkbox" data-link="' + r.n + '"' + (L.links[r.n] ? ' checked' : '') + '> ' +
              '<span class="bracket">' + (L.links[r.n] ? '⌐' : '·') + '</span> ' + pad(r.n) + '-' + pad(r.n + 1) + '</label>';
     }
@@ -553,6 +590,7 @@ function renderChannels(L) {
        Pokazanie numeru sugerowałoby, że gdzieś się wepnie. */
     const srcTxt = r.over ? '—' : (r.kind === 'usb' ? 'USB U' + pad(r.n) : 'In' + pad(r.n));
     const note = [];
+    if (!L.cap.linksAdjacent && r.side === 'L') note.push('stereo z ' + pad(r.n + 1));
     if (r.noMain) note.push('poza Main LR');
     if (r.over) note.push('POZA POJEMNOŚCIĄ');
     return '<tr class="' + cls + '">' +
@@ -737,7 +775,9 @@ function buildJSON(L, B) {
     schema: 'magickeye.input-list/1',
     generated: new Date().toISOString(),
     gig: S.gig,
+    counts: { jacks: L.rows.filter(r => !r.spacer).length, channelStrips: L.strips },
     console: { target: S.target, label: L.cap.label, channelSlots: L.cap.channels,
+               stereoNeedsAdjacentPair: L.cap.linksAdjacent,
                auxReturnSlots: L.cap.auxReturn, busSlots: L.cap.buses, capacitiesVerified: L.cap.verified },
     selection: S.src,
     channels: L.rows.map(r => r.spacer
@@ -962,6 +1002,7 @@ function syncControls() {
   $('#gig-console').value = S.gig.console || '';
   $$('[name="target"]').forEach(el => el.checked = el.value === S.target);
   $('#align').checked = S.alignPairs;
+  $('#align-wrap').hidden = !capacity(S).linksAdjacent;
   $('#p16mon-on').checked = S.p16Monitor.on;
   $('#p16mon-name').value = S.p16Monitor.name || '';
   $('#p16mon-stereo').value = S.p16Monitor.stereo ? 'stereo' : 'mono';
