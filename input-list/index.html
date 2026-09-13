@@ -15,7 +15,7 @@
        Dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=). -->
   <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css?v=6">
-  <link rel="stylesheet" href="input-list.css?v=1">
+  <link rel="stylesheet" href="input-list.css?v=2">
 </head>
 <body>
   <div class="crt-overlay" aria-hidden="true"></div>
@@ -31,7 +31,7 @@
     </header>
 
     <!-- ====== PASEK ZAJĘTOŚCI (przykleja się do góry ekranu) ====== -->
-    <div class="meter-bar no-print" role="status" aria-live="polite">
+    <div class="meter-bar" role="status" aria-live="polite">
       <span class="meter" id="meter-ch">
         <span class="meter-label">Kanały</span><span class="meter-val">–</span>
       </span>
@@ -93,7 +93,7 @@
           </div>
         </div>
 
-        <div class="preset-bar no-print">
+        <div class="preset-bar">
           <div class="field">
             <label for="preset-sel">Zapisane koncerty</label>
             <select id="preset-sel"></select>
@@ -113,7 +113,7 @@
     </section>
 
     <!-- ====== ŹRÓDŁA ====== -->
-    <section class="panel no-print">
+    <section class="panel">
       <h2 class="panel-title">Co nagłaśniamy</h2>
       <div class="panel-body">
         <div class="src-grid">
@@ -221,14 +221,17 @@
           <h3 class="src-group-title">Wokale</h3>
 
           <div class="field">
-            <span class="field-label">Ile mikrofonów wokalnych</span>
-            <div class="seg">
-              <input type="radio" name="vox" id="vx1" value="1" data-src="vox"><label for="vx1">1</label>
-              <input type="radio" name="vox" id="vx2" value="2" data-src="vox"><label for="vx2">2</label>
-              <input type="radio" name="vox" id="vx3" value="3" data-src="vox"><label for="vx3">3</label>
-              <input type="radio" name="vox" id="vx4" value="4" data-src="vox"><label for="vx4">4</label>
+            <span class="field-label">Mikrofony wokalne — wybrane: <span id="vox-count">0</span></span>
+            <div class="seg multi">
+              <input type="checkbox" id="vx-d" data-vox="drums"><label for="vx-d">Perkusista</label>
+              <input type="checkbox" id="vx-b" data-vox="bass"><label for="vx-b">Basista</label>
+              <input type="checkbox" id="vx-r" data-vox="rhy"><label for="vx-r">Rytmiczna</label>
+              <input type="checkbox" id="vx-l" data-vox="lead"><label for="vx-l">Lead</label>
             </div>
-            <span class="ch-grp" style="margin-top:.2rem">Kolejność na pulpicie: perkusista, rytmiczna, lead.</span>
+            <span class="ch-grp" style="margin-top:.2rem;text-transform:none">
+              Kolejność na pulpicie jest stała: <b>VOX DRUMS</b>, <b>VOX BASS</b>, <b>VOX RHY</b>, <b>VOX LEAD</b>.
+              Mikrofon basisty bywa potrzebny nie do śpiewu, tylko po to, żeby dało się odezwać w odsłuchach.
+            </span>
           </div>
 
           <h3 class="src-group-title">Elektronika</h3>
@@ -279,7 +282,7 @@
     <section class="panel">
       <h2 class="panel-title">Lista wejściowa</h2>
       <div class="panel-body">
-        <div class="btn-row no-print" style="margin-bottom:1rem">
+        <div class="btn-row" style="margin-bottom:1rem">
           <label class="ch-grp">
             <input type="checkbox" id="align"> wyrównuj pary stereo do granicy 1-2, 3-4, 5-6&nbsp;…
           </label>
@@ -290,7 +293,7 @@
             <thead>
               <tr>
                 <th>#</th><th>Nazwa</th><th>Grupa</th><th>Wejście</th>
-                <th class="no-print">Para stereo</th><th>Uwagi</th>
+                <th>Para stereo</th><th>Uwagi</th>
               </tr>
             </thead>
             <tbody id="chlist-body"></tbody>
@@ -313,7 +316,7 @@
           na nieparzystym: <code>/config/buslink</code> linkuje wyłącznie 1-2, 3-4, 5-6.
         </p>
         <div id="bus-body"></div>
-        <div class="btn-row no-print" style="margin-top:.75rem">
+        <div class="btn-row" style="margin-top:.75rem">
           <button type="button" class="btn" data-act="bus-add">+ dodaj bus</button>
         </div>
         <ul class="warn-list">
@@ -337,7 +340,7 @@
           od <code>Analog</code> (przed czymkolwiek) po <code>Post Fader</code>.
         </p>
 
-        <div class="btn-row no-print" style="margin-bottom:1rem">
+        <div class="btn-row" style="margin-bottom:1rem">
           <button type="button" class="btn" data-act="p16-auto">Wypełnij po kolei</button>
           <button type="button" class="btn danger" data-act="p16-clear">Wyczyść</button>
           <label class="ch-grp" style="display:flex;align-items:center;gap:.4rem">
@@ -345,7 +348,7 @@
             <select id="p16-tap-all"></select>
           </label>
         </div>
-        <p class="ch-grp no-print" id="p16-auto-note" style="margin:-.5rem 0 1rem">
+        <p class="ch-grp" id="p16-auto-note" style="margin:-.5rem 0 1rem">
           Sloty wypełniają się automatycznie do pierwszej ręcznej zmiany.
         </p>
 
@@ -396,7 +399,7 @@
     </section>
 
     <!-- ====== EKSPORT ====== -->
-    <section class="panel no-print">
+    <section class="panel">
       <h2 class="panel-title">Eksport</h2>
       <div class="panel-body">
         <p class="info-text ch-grp" style="text-transform:none">
@@ -414,7 +417,7 @@
       </div>
     </section>
 
-    <footer class="site-footer no-print">
+    <footer class="site-footer">
       <div class="footer-body">
         <p class="copyright">
           Strona robocza zespołu. Liczby XR18 potwierdzone eksportami z X-AIR Edit;
@@ -425,7 +428,12 @@
 
   </div>
 
+  <!-- Arkusz do druku: budowany z tych samych danych co interfejs,
+       ale bez ani jednej kontrolki. Na ekranie go nie widać (display:none
+       w input-list.css), w druku jest jedyną widoczną rzeczą. -->
+  <div id="print-sheet" aria-hidden="true"></div>
+
   <div class="toast" id="toast" hidden role="status"></div>
-  <script src="input-list.js?v=1"></script>
+  <script src="input-list.js?v=2"></script>
 </body>
 </html>

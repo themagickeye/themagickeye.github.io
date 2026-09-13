@@ -49,6 +49,13 @@ const P16_TAPS = [
 ];
 const DEFAULT_TAP = 'IN';
 
+const VOX_MICS = [
+  { k: 'drums', id: 'vox_drums', name: 'VOX DRUMS', label: 'Perkusista' },
+  { k: 'bass',  id: 'vox_bass',  name: 'VOX BASS',  label: 'Basista'    },
+  { k: 'rhy',   id: 'vox_rhy',   name: 'VOX RHY',   label: 'Rytmiczna'  },
+  { k: 'lead',  id: 'vox_lead',  name: 'VOX LEAD',  label: 'Lead'       }
+];
+
 /* Które pary źródło↔odczep faktycznie widzieliśmy w eksporcie.
    Dla kanałów zmierzono AIN/IN/PREEQ/POSTEQ (z mutami), dla
    powrotów USB IN/PRE/PRE+M, dla Aux In POST, a dla busów, FX,
@@ -93,7 +100,10 @@ function defaultState() {
       toms: { t1: true, t2: true, f1: true, f2: false },
       oh: 'stereo', room: 'none', spd: 'none',
       bass: 'di', gtrRhy: 1, gtrLd: 2,
-      vox: 3,
+      /* Tak jak przy tomach: liczba nie mówi, KTÓRE mikrofony, a przy
+         czterech śpiewających to jest różnica. Basista dochodzi głównie
+         po to, żeby móc się odezwać w odsłuchach. */
+      vox: { drums: true, bass: false, rhy: true, lead: true },
       click: true,  clickOnAux: false,
       tape: 'stereo', tapeOnAux: true,
       aux: []                  // [{name, stereo}]
@@ -180,18 +190,9 @@ function buildSources(src) {
   else addPair(out, 'gtr_ld', 'GTR LD', 'gitary');
 
   /* --- wokale ---
-     Kolejność wyjściowa jest stała (perkusista, rytmiczna, lead),
-     bo taka jest na pulpicie. Przy mniejszej liczbie odpadają
-     od góry: najpierw perkusista, potem rytmiczna. */
-  const VOX = [
-    { id: 'vox_drums', name: 'VOX DRUMS', from: 3 },
-    { id: 'vox_rhy',   name: 'VOX RHY',   from: 2 },
-    { id: 'vox_lead',  name: 'VOX LEAD',  from: 1 },
-    { id: 'vox_4',     name: 'VOX 4',     from: 4 }
-  ];
-  VOX.filter(v => src.vox >= v.from)
-     .sort((a, b) => (a.id === 'vox_4') - (b.id === 'vox_4'))
-     .forEach(v => add(v.id, v.name, 'wokale'));
+     Kolejność jest stała i idzie za pulpitem: perkusista, basista,
+     rytmiczna, lead. Zmiana kolejności to zmiana TEJ tablicy. */
+  VOX_MICS.forEach(v => { if (src.vox[v.k]) add(v.id, v.name, 'wokale'); });
 
   /* --- elektronika ---
      Klik i taśma wchodzą przez USB: na XR18 to pole 2 w
@@ -491,6 +492,7 @@ function render() {
   renderBuses(B);
   renderP16(L, B);
   renderWarnings(warnings(S, L, B));
+  renderPrintSheet(L, B);
   renderExport(L, B);
   syncControls();
   restoreFocus(focus);
@@ -646,6 +648,69 @@ function renderWarnings(w) {
 }
 
 /* ------------------------------------------------------------
+   8b. ARKUSZ DO DRUKU
+   Osobny, minimalny render tych samych danych. Próba doprowadzenia
+   ekranowego interfejsu do druku samym CSS-em zawsze kończy się
+   walką z <select>ami, checkboxami i paskami tytułów — a na kartce
+   nie są one do niczego potrzebne. Tu nie ma czego ukrywać, bo
+   niczego zbędnego nie ma od początku.
+   ------------------------------------------------------------ */
+function renderPrintSheet(L, B) {
+  const meta = [S.gig.name, S.gig.date, S.gig.console ? 'Konsoleta: ' + S.gig.console : '']
+    .filter(Boolean).map(esc).join(' &nbsp;·&nbsp; ');
+
+  const chRows = L.rows.map(r => {
+    if (r.spacer) return '<tr><td class="ps-n">' + pad(r.n) + '</td><td colspan="3" class="ps-dim">— wolne —</td></tr>';
+    const notes = [];
+    if (r.side === 'L') notes.push('para ' + pad(r.n) + '-' + pad(r.n + 1));
+    if (r.noMain) notes.push('poza Main LR');
+    if (r.over) notes.push('PONAD POJEMNOŚĆ');
+    return '<tr><td class="ps-n">' + pad(r.n) + '</td>' +
+      '<td class="ps-name">' + esc(r.name) + '</td>' +
+      '<td>' + (r.over ? '—' : (r.kind === 'usb' ? 'USB U' + pad(r.n) : 'In' + pad(r.n))) + '</td>' +
+      '<td class="ps-note">' + notes.join(' · ') + '</td></tr>';
+  }).join('');
+
+  let html = '<h1>Lista wejściowa — The Magick Eye</h1>';
+  if (meta) html += '<p class="ps-meta">' + meta + '</p>';
+  html += '<table class="ps-table"><thead><tr><th>#</th><th>Nazwa</th><th>Wejście</th><th>Uwagi</th></tr></thead>' +
+          '<tbody>' + chRows + '</tbody></table>';
+
+  if (L.auxRet.length) {
+    html += '<h2>Zwrot aux</h2><table class="ps-table"><tbody>' +
+      L.auxRet.map((r, i) => '<tr><td class="ps-n">U' + (17 + i) + '</td>' +
+        '<td class="ps-name">' + esc(r.name) + '</td><td colspan="2"></td></tr>').join('') +
+      '</tbody></table>';
+  }
+
+  const buses = B.rows.filter(r => !r.spacer);
+  if (buses.length) {
+    html += '<h2>Busy odsłuchowe</h2><table class="ps-table"><tbody>' +
+      buses.map(r => '<tr><td class="ps-n">' + r.slots.map(pad).join('-') + '</td>' +
+        '<td class="ps-name">' + esc(r.bus.name) + '</td>' +
+        '<td>' + (r.bus.stereo ? 'stereo' : 'mono') + '</td>' +
+        '<td class="ps-note">' + (r.bus.out === 'aux' ? 'Aux Out' : r.bus.out === 'ultranet' ? 'slot P16' : 'Aux Out + slot P16') +
+        '</td></tr>').join('') + '</tbody></table>';
+  }
+
+  const avail = p16Sources(L, B);
+  if (S.p16.some(sl => avail.some(a => a.id === sl.src))) {
+    html += '<h2>Odsłuch P16 / Ultranet</h2><table class="ps-table"><tbody>' +
+      S.p16.map((sl, i) => {
+        const a = avail.find(x => x.id === sl.src);
+        const t = P16_TAPS.find(x => x.v === sl.tap);
+        if (!a) return '<tr><td class="ps-n">' + pad(i + 1) + '</td><td colspan="3" class="ps-dim">—</td></tr>';
+        return '<tr><td class="ps-n">' + pad(i + 1) + '</td>' +
+          '<td class="ps-name">' + esc(a.label.replace(/^(\S+)\s+\s*/, '')) + '</td>' +
+          '<td>' + esc(a.osc) + '</td>' +
+          '<td class="ps-note">' + esc(t ? t.label : sl.tap) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+
+  $('#print-sheet').innerHTML = html;
+}
+
+/* ------------------------------------------------------------
    9. EKSPORT
    JSON jest świadomie niezależny od konsolety: opisuje ZAMIAR
    (co gdzie ma iść), a nie komendy OSC. Z tego da się wygenerować
@@ -784,6 +849,13 @@ function migrateSrc(src) {
     out.toms = { t1: !!src.toms.t1, t2: !!src.toms.t2, f1: !!src.toms.f1, f2: !!src.toms.f2 };
   }
   if (typeof src.room === 'boolean') out.room = src.room ? 'mono' : 'none';
+  /* Stara liczba wokali dobierała mikrofony od lidera w dół; czwarty
+     nazywał się wtedy „VOX 4" i był po prostu basistą bez nazwiska. */
+  if (typeof src.vox === 'number') {
+    out.vox = { lead: src.vox >= 1, rhy: src.vox >= 2, drums: src.vox >= 3, bass: src.vox >= 4 };
+  } else if (src.vox && typeof src.vox === 'object') {
+    out.vox = { drums: !!src.vox.drums, bass: !!src.vox.bass, rhy: !!src.vox.rhy, lead: !!src.vox.lead };
+  }
   return out;
 }
 
@@ -828,6 +900,8 @@ function syncControls() {
   });
   $$('[data-tom]').forEach(el => { el.checked = !!S.src.toms[el.dataset.tom]; });
   $('#tom-count').textContent = ['t1', 't2', 'f1', 'f2'].filter(k => S.src.toms[k]).length;
+  $$('[data-vox]').forEach(el => { el.checked = !!S.src.vox[el.dataset.vox]; });
+  $('#vox-count').textContent = VOX_MICS.filter(v => S.src.vox[v.k]).length;
   $('#gig-name').value = S.gig.name || '';
   $('#gig-date').value = S.gig.date || '';
   $('#gig-console').value = S.gig.console || '';
@@ -882,6 +956,11 @@ function onInput(e) {
   }
   if (d.tom !== undefined) {
     S.src.toms[d.tom] = el.checked;
+    S.links = {}; S.p16Auto = true;
+    return render();
+  }
+  if (d.vox !== undefined) {
+    S.src.vox[d.vox] = el.checked;
     S.links = {}; S.p16Auto = true;
     return render();
   }
