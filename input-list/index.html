@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Podstrona robocza: nie ma jej w menu i nie ma jej być w wyszukiwarce. -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Lista wejściowa — konfigurator</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <!-- Share Tech Mono ma wyłącznie zakres latin: jest w nim ó, ale nie ma ł ani ń.
+       Bez tego przeglądarka bierze je z Courier New i wyrazy się rozjeżdżają.
+       Dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=). -->
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=6">
+  <link rel="stylesheet" href="input-list.css?v=1">
+</head>
+<body>
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <div class="screen wide">
+
+    <header class="tool-header">
+      <h1 class="tool-title">Lista wejściowa</h1>
+      <p class="tool-sub">
+        Konfigurator kanałów, busów i odsłuchu P16 &nbsp;·&nbsp;
+        <a href="../">powrót na stronę</a>
+      </p>
+    </header>
+
+    <!-- ====== PASEK ZAJĘTOŚCI (przykleja się do góry ekranu) ====== -->
+    <div class="meter-bar no-print" role="status" aria-live="polite">
+      <span class="meter" id="meter-ch">
+        <span class="meter-label">Kanały</span><span class="meter-val">–</span>
+      </span>
+      <span class="slots" id="slots-ch" aria-hidden="true"></span>
+      <span class="meter" id="meter-aux">
+        <span class="meter-label">Zwrot aux</span><span class="meter-val">–</span>
+      </span>
+      <span class="meter" id="meter-bus">
+        <span class="meter-label">Busy</span><span class="meter-val">–</span>
+      </span>
+      <span class="meter" id="meter-p16">
+        <span class="meter-label">P16</span><span class="meter-val">–</span>
+      </span>
+    </div>
+
+    <!-- ====== KONCERT + PRESETY ====== -->
+    <section class="panel">
+      <h2 class="panel-title">Koncert</h2>
+      <div class="panel-body">
+        <div class="gig-meta">
+          <div class="field">
+            <label for="gig-name">Nazwa / miejsce</label>
+            <input type="text" id="gig-name" placeholder="np. sesja live, próba, festiwal">
+          </div>
+          <div class="field">
+            <label for="gig-date">Data</label>
+            <input type="date" id="gig-date">
+          </div>
+          <div class="field">
+            <label for="gig-console">Konsoleta / uwagi</label>
+            <input type="text" id="gig-console" placeholder="np. jeden stół, bez splittera">
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:1rem">
+          <span class="field-label">Konsoleta docelowa</span>
+          <div class="seg">
+            <input type="radio" name="target" id="t-xr18" value="xr18"><label for="t-xr18">XR18</label>
+            <input type="radio" name="target" id="t-wing" value="wing"><label for="t-wing">Wing</label>
+            <input type="radio" name="target" id="t-other" value="other"><label for="t-other">Inna</label>
+          </div>
+        </div>
+
+        <!-- Pojemności XR18 są zmierzone plikami scen, więc zablokowane.
+             Dla pozostałych konsol wpisuje się je ręcznie — lepiej puste
+             pole do wypełnienia niż liczba wzięta z sufitu. -->
+        <div class="gig-meta" id="cap-fields" hidden>
+          <div class="field">
+            <label for="cap-ch">Kanałów wejściowych</label>
+            <input type="number" id="cap-ch" min="1" max="128">
+          </div>
+          <div class="field">
+            <label for="cap-aux">Slotów zwrotu aux/USB</label>
+            <input type="number" id="cap-aux" min="0" max="32">
+          </div>
+          <div class="field">
+            <label for="cap-bus">Busów</label>
+            <input type="number" id="cap-bus" min="0" max="32">
+          </div>
+        </div>
+
+        <div class="preset-bar no-print">
+          <div class="field">
+            <label for="preset-sel">Zapisane koncerty</label>
+            <select id="preset-sel"></select>
+          </div>
+          <div class="field">
+            <label for="preset-name">Nazwa zapisu</label>
+            <input type="text" id="preset-name" placeholder="np. sesja live">
+          </div>
+          <button type="button" class="btn" data-act="preset-load">Wczytaj</button>
+          <button type="button" class="btn" data-act="preset-save">Zapisz</button>
+          <button type="button" class="btn danger" data-act="preset-del">Usuń</button>
+          <button type="button" class="btn" data-act="link" title="Kopiuje adres z całą konfiguracją — można go wysłać realizatorowi">Kopiuj link</button>
+          <button type="button" class="btn" data-act="print">Drukuj</button>
+          <button type="button" class="btn danger" data-act="reset">Od nowa</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ŹRÓDŁA ====== -->
+    <section class="panel no-print">
+      <h2 class="panel-title">Co nagłaśniamy</h2>
+      <div class="panel-body">
+        <div class="src-grid">
+
+          <h3 class="src-group-title">Perkusja</h3>
+
+          <div class="field">
+            <span class="field-label">Stopa</span>
+            <div class="seg">
+              <input type="radio" name="kick" id="kick1" value="1" data-src="kick"><label for="kick1">1 — in</label>
+              <input type="radio" name="kick" id="kick2" value="2" data-src="kick"><label for="kick2">2 — in + out</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Werbel</span>
+            <div class="seg">
+              <input type="radio" name="snare" id="sn1" value="1" data-src="snare"><label for="sn1">1 — góra</label>
+              <input type="radio" name="snare" id="sn2" value="2" data-src="snare"><label for="sn2">2 — góra + dół</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Hi-hat</span>
+            <div class="seg">
+              <input type="radio" name="hh" id="hh0" value="" data-src="hihat"><label for="hh0">nie</label>
+              <input type="radio" name="hh" id="hh1" value="1" data-src="hihat"><label for="hh1">tak</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tomy — wybrane: <span id="tom-count">0</span></span>
+            <div class="seg multi">
+              <input type="checkbox" id="tm-t1" data-tom="t1"><label for="tm-t1">Tom 1</label>
+              <input type="checkbox" id="tm-t2" data-tom="t2"><label for="tm-t2">Tom 2</label>
+              <input type="checkbox" id="tm-f1" data-tom="f1"><label for="tm-f1">Floor 1</label>
+              <input type="checkbox" id="tm-f2" data-tom="f2"><label for="tm-f2">Floor 2</label>
+            </div>
+            <span class="ch-grp" style="margin-top:.2rem;text-transform:none">
+              Na zestawie są dwa wysokie i dwa floor; zwykle mikrofonuje się najwyżej trzy.
+              Przy jednym floorze kanał nazywa się <b>FLOOR</b>, przy dwóch — <b>FLOOR 1</b> i <b>FLOOR 2</b>.
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Overheady</span>
+            <div class="seg">
+              <input type="radio" name="oh" id="oh0" value="none" data-src="oh"><label for="oh0">brak</label>
+              <input type="radio" name="oh" id="ohm" value="mono" data-src="oh"><label for="ohm">mono</label>
+              <input type="radio" name="oh" id="ohs" value="stereo" data-src="oh"><label for="ohs">stereo</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Roomy</span>
+            <div class="seg">
+              <input type="radio" name="room" id="rm0" value="none" data-src="room"><label for="rm0">brak</label>
+              <input type="radio" name="room" id="rmm" value="mono" data-src="room"><label for="rmm">mono</label>
+              <input type="radio" name="room" id="rms" value="stereo" data-src="room"><label for="rms">stereo</label>
+            </div>
+            <span class="ch-grp" style="margin-top:.2rem;text-transform:none">
+              Stereo daje parę <b>ROOM L / ROOM R</b> — linkowaną tak samo jak overheady.
+            </span>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Roland SPD-SX</span>
+            <div class="seg">
+              <input type="radio" name="spd" id="sp0" value="none" data-src="spd"><label for="sp0">brak</label>
+              <input type="radio" name="spd" id="spm" value="mono" data-src="spd"><label for="spm">mono</label>
+              <input type="radio" name="spd" id="sps" value="stereo" data-src="spd"><label for="sps">stereo</label>
+            </div>
+            <span class="ch-grp" style="margin-top:.2rem;text-transform:none">
+              Wchodzi liniowo, nie mikrofonem — na liście stoi przy perkusji, bo tam go szuka realizator.
+            </span>
+          </div>
+
+          <h3 class="src-group-title">Bas i gitary</h3>
+
+          <div class="field">
+            <span class="field-label">Bas</span>
+            <div class="seg">
+              <input type="radio" name="bass" id="bs1" value="di" data-src="bass"><label for="bs1">DI</label>
+              <input type="radio" name="bass" id="bs2" value="mic" data-src="bass"><label for="bs2">mikrofon</label>
+              <input type="radio" name="bass" id="bs3" value="both" data-src="bass"><label for="bs3">oba</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Gitara rytmiczna</span>
+            <div class="seg">
+              <input type="radio" name="grhy" id="gr1" value="1" data-src="gtrRhy"><label for="gr1">1 kanał</label>
+              <input type="radio" name="grhy" id="gr2" value="2" data-src="gtrRhy"><label for="gr2">2 — stereo</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Gitara prowadząca</span>
+            <div class="seg">
+              <input type="radio" name="gld" id="gl1" value="1" data-src="gtrLd"><label for="gl1">1 kanał</label>
+              <input type="radio" name="gld" id="gl2" value="2" data-src="gtrLd"><label for="gl2">2 — stereo</label>
+            </div>
+          </div>
+
+          <h3 class="src-group-title">Wokale</h3>
+
+          <div class="field">
+            <span class="field-label">Ile mikrofonów wokalnych</span>
+            <div class="seg">
+              <input type="radio" name="vox" id="vx1" value="1" data-src="vox"><label for="vx1">1</label>
+              <input type="radio" name="vox" id="vx2" value="2" data-src="vox"><label for="vx2">2</label>
+              <input type="radio" name="vox" id="vx3" value="3" data-src="vox"><label for="vx3">3</label>
+              <input type="radio" name="vox" id="vx4" value="4" data-src="vox"><label for="vx4">4</label>
+            </div>
+            <span class="ch-grp" style="margin-top:.2rem">Kolejność na pulpicie: perkusista, rytmiczna, lead.</span>
+          </div>
+
+          <h3 class="src-group-title">Elektronika</h3>
+
+          <div class="field">
+            <span class="field-label">Klik</span>
+            <div class="seg">
+              <input type="radio" name="click" id="cl0" value="" data-src="click"><label for="cl0">nie</label>
+              <input type="radio" name="click" id="cl1" value="1" data-src="click"><label for="cl1">tak</label>
+            </div>
+            <label class="ch-grp" style="margin-top:.3rem">
+              <input type="checkbox" data-src="clickOnAux"> na zwrocie aux zamiast na kanale
+            </label>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Taśma (powrót USB z REAPER-a)</span>
+            <div class="seg">
+              <input type="radio" name="tape" id="tp0" value="none" data-src="tape"><label for="tp0">brak</label>
+              <input type="radio" name="tape" id="tpm" value="mono" data-src="tape"><label for="tpm">mono</label>
+              <input type="radio" name="tape" id="tps" value="stereo" data-src="tape"><label for="tps">stereo</label>
+            </div>
+            <label class="ch-grp" style="margin-top:.3rem">
+              <input type="checkbox" data-src="tapeOnAux"> na zwrocie aux zamiast na kanale
+            </label>
+          </div>
+
+          <div class="field" id="aux-hint">
+            <span class="ch-grp">
+              Na XR18 zwrot aux to U17/U18 — dwa sloty poza szesnastką kanałów.
+              Taśma stereo mieści się tam w całości i nie zabiera nic z listy.
+            </span>
+          </div>
+
+          <h3 class="src-group-title">Dodatkowe wejścia</h3>
+          <div style="grid-column:1/-1">
+            <div id="aux-list"></div>
+            <div class="btn-row" style="margin-top:.6rem">
+              <button type="button" class="btn" data-act="aux-add">+ dodaj wejście</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== LISTA WEJŚCIOWA ====== -->
+    <section class="panel">
+      <h2 class="panel-title">Lista wejściowa</h2>
+      <div class="panel-body">
+        <div class="btn-row no-print" style="margin-bottom:1rem">
+          <label class="ch-grp">
+            <input type="checkbox" id="align"> wyrównuj pary stereo do granicy 1-2, 3-4, 5-6&nbsp;…
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="chlist">
+            <thead>
+              <tr>
+                <th>#</th><th>Nazwa</th><th>Grupa</th><th>Wejście</th>
+                <th class="no-print">Para stereo</th><th>Uwagi</th>
+              </tr>
+            </thead>
+            <tbody id="chlist-body"></tbody>
+          </table>
+        </div>
+
+        <h3 class="src-group-title" style="margin-top:1.5rem">Zwrot aux</h3>
+        <div id="auxret"></div>
+
+        <ul class="warn-list" id="warnings"></ul>
+      </div>
+    </section>
+
+    <!-- ====== BUSY ====== -->
+    <section class="panel">
+      <h2 class="panel-title">Busy odsłuchowe</h2>
+      <div class="panel-body">
+        <p class="info-text ch-grp" style="text-transform:none">
+          Bus stereo zajmuje dwa sloty i — tak samo jak kanały — musi zaczynać się
+          na nieparzystym: <code>/config/buslink</code> linkuje wyłącznie 1-2, 3-4, 5-6.
+        </p>
+        <div id="bus-body"></div>
+        <div class="btn-row no-print" style="margin-top:.75rem">
+          <button type="button" class="btn" data-act="bus-add">+ dodaj bus</button>
+        </div>
+        <ul class="warn-list">
+          <li class="info">
+            Gniazdo to <code>/routing/aux/NN BusN POST</code>. ULTRANET działa odwrotnie, niż
+            sugeruje słowo „wyjście": bus nie wychodzi nigdzie sam — to slot P16 wybiera go
+            jako źródło (<code>/routing/p16/SS Bus1 IN</code>). Zaznaczenie tu tylko przypomina,
+            żeby zejść niżej i wstawić go w slot.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== P16 ====== -->
+    <section class="panel">
+      <h2 class="panel-title">Odsłuch P16 / ULTRANET</h2>
+      <div class="panel-body">
+        <p class="info-text ch-grp" style="text-transform:none">
+          ULTRANET ma równo 16 slotów — ani jednego więcej. Jeśli źródeł jest więcej,
+          poniżej widać dokładnie, co zostaje za burtą. Każdy slot ma własny punkt odczepu:
+          od <code>Analog</code> (przed czymkolwiek) po <code>Post Fader</code>.
+        </p>
+
+        <div class="btn-row no-print" style="margin-bottom:1rem">
+          <button type="button" class="btn" data-act="p16-auto">Wypełnij po kolei</button>
+          <button type="button" class="btn danger" data-act="p16-clear">Wyczyść</button>
+          <label class="ch-grp" style="display:flex;align-items:center;gap:.4rem">
+            odczep dla wszystkich:
+            <select id="p16-tap-all"></select>
+          </label>
+        </div>
+        <p class="ch-grp no-print" id="p16-auto-note" style="margin:-.5rem 0 1rem">
+          Sloty wypełniają się automatycznie do pierwszej ręcznej zmiany.
+        </p>
+
+        <div class="p16-grid" id="p16-grid"></div>
+
+        <div class="dropped">
+          <h3>Nie zmieściło się w odsłuchu (<span id="p16-dropped-count">0</span>)</h3>
+          <div id="p16-dropped"></div>
+          <p class="ch-grp" id="p16-spare" style="margin:.6rem 0 0;text-transform:none"></p>
+        </div>
+
+        <details class="ref">
+          <summary>Słownik <code>/routing/p16/SS</code> — ustalony pomiarem</summary>
+          <p class="ch-grp" style="text-transform:none">
+            Odczytane z czterech eksportów: <code>IOpatchingP16.scn</code> (każdy slot inne
+            źródło i inny odczep) oraz trzech presetów fabrycznych — <code>P16c8busLR</code>,
+            <code>P16c8FX</code> i <code>P16USB(1)</code> — które domykają zakresy
+            <code>Bus1–Bus6</code>, <code>Fx1L–Fx4R</code>, <code>U01–U16</code> i <code>L</code>/<code>R</code>.
+            Żadna z tych wartości nie jest zgadnięta.
+            Czego pomiar <b>nie</b> obejmuje: które odczepy są legalne dla których źródeł.
+            Widzieliśmy kanały z <code>AIN / IN / PREEQ / POSTEQ</code> (z mutami), powroty USB
+            z <code>IN / PRE / PRE+M</code>, Aux In z <code>POST</code>, a busy — poza
+            <code>IN</code> — także z <code>PREEQ</code>, <code>POSTEQ</code> i <code>POST</code>
+            (<code>P16odczepy.scn</code>), czyli tymi samymi tokenami co kanały. Dla FX, wysyłek
+            i Main widzieliśmy dotąd wyłącznie <code>IN</code>. Konfigurator pozwala wybrać
+            wszystko i sam zgłasza, kiedy wychodzisz poza to, co zmierzone.
+          </p>
+          <div class="table-wrap">
+            <table class="chlist ref-table">
+              <thead><tr><th>Token</th><th>Znaczenie</th><th>Token</th><th>Odczep</th></tr></thead>
+              <tbody>
+                <tr><td><code>Ch01</code>–<code>Ch16</code></td><td>kanał</td><td><code>AIN</code></td><td>Analog</td></tr>
+                <tr><td><code>U01</code>–<code>U18</code></td><td>powrót USB</td><td><code>AIN+M</code></td><td>Analog + Mute</td></tr>
+                <tr><td><code>AuxL</code> / <code>AuxR</code></td><td>Aux In</td><td><code>IN</code></td><td>Input</td></tr>
+                <tr><td><code>Bus1</code>–<code>Bus6</code></td><td>bus</td><td><code>IN+M</code></td><td>Input + Mute</td></tr>
+                <tr><td><code>Send1</code>–<code>Send4</code></td><td>wysyłka FX</td><td><code>PREEQ</code></td><td>Pre EQ</td></tr>
+                <tr><td><code>Fx1L</code>–<code>Fx4R</code></td><td>powrót FX</td><td><code>PREEQ+M</code></td><td>Pre EQ + Mute</td></tr>
+                <tr><td><code>L</code> / <code>R</code></td><td>Main</td><td><code>POSTEQ</code></td><td>Post EQ</td></tr>
+                <tr><td></td><td></td><td><code>POSTEQ+M</code></td><td>Post EQ + Mute</td></tr>
+                <tr><td></td><td></td><td><code>PRE</code></td><td>Pre Fader</td></tr>
+                <tr><td></td><td></td><td><code>PRE+M</code></td><td>Pre Fader + Mute</td></tr>
+                <tr><td></td><td></td><td><code>POST</code></td><td>Post Fader — bez wariantu + Mute</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ====== EKSPORT ====== -->
+    <section class="panel no-print">
+      <h2 class="panel-title">Eksport</h2>
+      <div class="panel-body">
+        <p class="info-text ch-grp" style="text-transform:none">
+          JSON opisuje <b>zamiar</b>, nie komendy konkretnej konsolety: co gdzie ma iść,
+          które kanały są parą, co siedzi w którym slocie P16. Z tego da się wygenerować
+          i scenę <code>.scn</code> dla XR18, i snapshot dla Winga — to dwa różne formaty.
+        </p>
+        <div class="btn-row" style="margin-bottom:.75rem">
+          <button type="button" class="btn" data-act="export-json">JSON</button>
+          <button type="button" class="btn" data-act="export-text">Tekst na kartkę</button>
+          <button type="button" class="btn" data-act="copy">Kopiuj</button>
+          <button type="button" class="btn" data-act="download">Pobierz plik</button>
+        </div>
+        <textarea class="export-out" id="export-out" readonly spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <footer class="site-footer no-print">
+      <div class="footer-body">
+        <p class="copyright">
+          Strona robocza zespołu. Liczby XR18 potwierdzone eksportami z X-AIR Edit;
+          wszystko, czego nie dało się potwierdzić, jest oznaczone kropkowaną linią.
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast" hidden role="status"></div>
+  <script src="input-list.js?v=1"></script>
+</body>
+</html>

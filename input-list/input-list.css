@@ -1,0 +1,435 @@
+/* ============================================================
+   KONFIGURATOR LISTY WEJŚCIOWEJ — arkusz dodatkowy
+   Ładowany PO ../style.css, z którego bierze paletę (--bg,
+   --accent, --border …), fonty, nakładkę CRT i kursor.
+   Tutaj są wyłącznie rzeczy, których strona główna nie ma:
+   formularz, tabela kanałów, pasek zajętości, sloty P16.
+
+   Strona główna chwali się w stopce "0 js" — ta podstrona
+   jest ukryta (noindex, brak linku z menu) i celowo łamie tę
+   zasadę: bez JS-a nie da się liczyć kanałów na bieżąco.
+   ============================================================ */
+
+/* .field i .gig-meta mają własny display, który bije domyślne
+   display:none z atrybutu hidden — bez tego ukryte sekcje zostają
+   widoczne. Dotyczy #cap-fields i #aux-hint. */
+[hidden] { display: none !important; }
+
+/* Szerzej niż strona główna: tabela kanałów ma 6 kolumn. */
+.screen.wide { max-width: 1180px; }
+
+/* ---------- Nagłówek podstrony ---------- */
+.tool-header {
+  border-bottom: 3px double var(--border);
+  margin-bottom: 2rem;
+  padding: 1.25rem 0 1rem;
+}
+.tool-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.tool-sub {
+  color: var(--dim);
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+}
+.tool-sub a { color: var(--accent-2); text-decoration: none; }
+.tool-sub a:hover, .tool-sub a:focus { color: var(--accent); text-decoration: underline; }
+
+/* ---------- Metryczka koncertu ---------- */
+.gig-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ---------- Pola formularza ---------- */
+.field { display: flex; flex-direction: column; gap: 0.2rem; }
+.field > label,
+.field-label {
+  color: var(--accent-2);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.4rem;
+  border-radius: 0;
+  /* bez tego Safari maluje własne, jasne tło i zaokrąglenia */
+  -webkit-appearance: none;
+  appearance: none;
+}
+select {
+  /* strzałka rysowana ręcznie, bo appearance:none zabiera systemową */
+  background-image: linear-gradient(45deg, transparent 50%, var(--accent-2) 50%),
+                    linear-gradient(135deg, var(--accent-2) 50%, transparent 50%);
+  background-position: right 0.85rem center, right 0.55rem center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 1.6rem;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+input::placeholder { color: var(--dim); }
+
+/* ---------- Przyciski ---------- */
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-2);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.8rem;
+}
+.btn:hover, .btn:focus {
+  color: var(--bg);
+  background: var(--accent-2);
+  outline: none;
+}
+.btn.danger { color: var(--dim); }
+.btn.danger:hover, .btn.danger:focus { background: var(--dim); color: var(--bg); }
+/* Stan wciśnięty (wybrany format eksportu). Deklarowany PO :hover,
+   żeby wygrał przy równej specyficzności — i z własnym :hover,
+   żeby przycisk dalej reagował na mysz. */
+.btn.on { background: var(--accent-3); color: var(--fg); border-color: var(--accent); }
+.btn.on:hover, .btn.on:focus { background: var(--accent-2); color: var(--bg); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+/* ---------- Siatka wyborów źródeł ---------- */
+.src-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem 1.5rem;
+}
+.src-group-title {
+  grid-column: 1 / -1;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.8rem;
+  margin: 0.75rem 0 -0.25rem;
+  border-bottom: 1px solid var(--accent-3);
+  padding-bottom: 0.2rem;
+}
+.src-group-title:first-child { margin-top: 0; }
+
+/* Segmentowany przełącznik: radia udające rząd klawiszy.
+   position:relative jest konieczne — bez niego ukryte radia
+   pozycjonują się względem strony i klawiaturowe focus potrafi
+   przewinąć widok w losowe miejsce. */
+.seg { display: flex; flex-wrap: wrap; position: relative; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+/* Ujemny margines zamiast zdejmowania lewej krawędzi: przy zawijaniu
+   do drugiego wiersza element przestaje być :first-of-type, więc bez
+   tego traciłby lewą ramkę i rząd wyglądałby na urwany. */
+.seg label {
+  border: 1px solid var(--border);
+  margin-left: -1px;
+  padding: 0.25rem 0.6rem;
+  color: var(--dim);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  text-align: center;
+}
+.seg label:first-of-type { margin-left: 0; }
+.seg input:checked + label {
+  color: var(--bg);
+  background: var(--accent);
+  font-weight: bold;
+}
+.seg input:focus-visible + label { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+.seg label:hover { color: var(--fg); }
+.seg input:checked + label:hover { color: var(--bg); }
+
+/* Wariant wielokrotnego wyboru: te same klawisze, ale checkboxy.
+   Zaznaczone są jaśniejsze niż w radiach, żeby dało się odróżnić
+   „jeden z" od „dowolnie wiele". */
+.seg.multi input:checked + label {
+  background: var(--accent-2);
+  color: var(--bg);
+}
+
+/* ---------- Pasek zajętości kanałów ---------- */
+.meter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: center;
+  background: var(--bg-panel);
+  border: 2px solid var(--border);
+  border-top-width: 0;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 0 rgba(0,230,60,0.18);
+}
+.meter {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.meter .meter-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-2);
+}
+.meter .meter-val { color: var(--fg); }
+.meter.over .meter-val { color: #ff5f5f; text-shadow: 0 0 8px #ff5f5f; }
+.meter.full .meter-val { color: var(--accent); text-shadow: 0 0 8px var(--accent); }
+
+/* Wskaźnik kratkowy: jedna kratka = jeden kanał.
+   Czytelniejszy od paska procentowego, bo od razu widać ile
+   slotów zostało — a o slot, nie o procent, tu chodzi. */
+.slots { display: flex; flex-wrap: wrap; gap: 2px; }
+.slot-box {
+  width: 11px; height: 18px;
+  border: 1px solid var(--accent-3);
+  background: transparent;
+}
+.slot-box.used  { background: var(--accent); border-color: var(--accent); }
+.slot-box.spacer{ background: repeating-linear-gradient(45deg, var(--accent-3) 0 2px, transparent 2px 4px); }
+.slot-box.over  { background: #ff5f5f; border-color: #ff5f5f; }
+
+/* ---------- Tabela kanałów ---------- */
+.table-wrap { overflow-x: auto; }
+table.chlist {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+table.chlist th {
+  text-align: left;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: normal;
+  border-bottom: 1px solid var(--border);
+  padding: 0.3rem 0.5rem;
+  white-space: nowrap;
+}
+table.chlist td {
+  padding: 0.2rem 0.5rem;
+  border-bottom: 1px dashed var(--accent-3);
+  vertical-align: middle;
+}
+table.chlist tr.over td { color: #ff9c9c; }
+table.chlist tr.spacer td { color: var(--dim); font-style: italic; }
+.ch-num {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--accent);
+  width: 3.5rem;
+  text-align: right;
+  line-height: 1;
+}
+.ch-name { color: var(--fg); font-weight: bold; letter-spacing: 0.05em; white-space: nowrap; }
+.ch-grp, .ch-src { color: var(--dim); font-size: 0.85rem; text-transform: uppercase; }
+.ch-src.usb { color: var(--accent-2); }
+
+/* Klamra pary stereo — rysowana bordersami, żeby nie wymagała grafiki */
+.ch-link { width: 7rem; white-space: nowrap; }
+.ch-link .bracket { color: var(--accent-2); }
+.ch-link label { color: var(--dim); font-size: 0.8rem; cursor: inherit; }
+.ch-link input { accent-color: var(--accent); }
+tr.linked .ch-name { color: var(--accent-2); }
+
+/* ---------- Ostrzeżenia ---------- */
+.warn-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.warn-list li {
+  border-left: 3px solid var(--accent);
+  padding: 0.35rem 0 0.35rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+.warn-list li.err { border-left-color: #ff5f5f; color: #ff9c9c; }
+.warn-list li.info { border-left-color: var(--dim); color: var(--dim); }
+.warn-list li b { color: inherit; }
+.warn-list:empty { display: none; }
+
+/* Znacznik "nieustalone pomiarem" — konsekwentnie w całym narzędziu */
+.unverified {
+  color: var(--dim);
+  border-bottom: 1px dotted var(--dim);
+  cursor: help;
+}
+
+/* ---------- Busy ---------- */
+.bus-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 9rem 12rem 2.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--accent-3);
+}
+.bus-slots {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+/* ---------- P16 ---------- */
+.p16-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+  gap: 0.35rem 1.5rem;
+}
+.p16-slot {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 9.5rem;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.15rem 0;
+}
+.p16-slot select:disabled { color: var(--accent-3); border-color: var(--accent-3); }
+.p16-num {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--accent);
+  text-align: right;
+  line-height: 1;
+}
+.p16-slot select { width: 100%; }
+.p16-slot.empty .p16-num { color: var(--accent-3); }
+
+.dropped {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+}
+.dropped h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent-2);
+  font-weight: normal;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip {
+  border: 1px solid var(--accent-3);
+  padding: 0.1rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+.chip.out { border-color: #ff5f5f; color: #ff9c9c; }
+
+/* ---------- Ściąga ze słownikiem OSC ---------- */
+.ref { margin-top: 1.25rem; border-top: 1px solid var(--accent-3); padding-top: 0.75rem; }
+.ref summary {
+  color: var(--accent-2);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+}
+.ref summary::marker { color: var(--accent); }
+.ref-table { max-width: 46rem; font-size: 0.85rem; }
+.ref-table code { color: var(--fg); }
+
+/* ---------- Eksport ---------- */
+.export-out {
+  width: 100%;
+  min-height: 18rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: pre;
+  overflow: auto;
+  resize: vertical;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 10000;
+  border: 2px solid var(--bg);
+}
+.toast[hidden] { display: none !important; }
+
+/* ---------- Presety ---------- */
+.preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+.preset-bar .field { min-width: 12rem; }
+
+/* ---------- Wąski ekran ---------- */
+@media (max-width: 700px) {
+  .bus-row { grid-template-columns: 3rem 1fr; grid-auto-rows: auto; }
+  .bus-row > * { min-width: 0; }
+  .meter-bar { font-size: 0.9rem; }
+  .p16-slot { grid-template-columns: 2.5rem minmax(0, 1fr); }
+  .p16-slot select[data-p16tap] { grid-column: 2; }
+  .slots { display: none; }  /* 48 kratek na telefonie to kasza */
+}
+
+/* ---------- Druk: kartka dla realizatora ----------
+   Na scenie nikt nie czyta zielonego fosforu z kartki — druk
+   idzie czarnym na białym, bez CRT, bez formularzy, bez
+   przycisków. Zostaje sama lista wejściowa, busy i P16. */
+@media print {
+  @page { margin: 14mm; }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+    cursor: auto;
+  }
+  .crt-overlay, .no-print, .btn, .btn-row, .meter-bar, .preset-bar { display: none !important; }
+  .screen.wide { max-width: none; padding: 0; }
+  .panel {
+    border: 1px solid #000;
+    background: #fff;
+    box-shadow: none;
+    margin-bottom: 1rem;
+    break-inside: avoid;
+  }
+  .panel-title { background: #000; color: #fff; font-size: 1.2rem; }
+  .ch-num, .p16-num, .bus-slots { color: #000; }
+  .ch-name { color: #000; }
+  .ch-grp, .ch-src, .chip { color: #444; }
+  table.chlist td { border-bottom: 1px solid #ccc; }
+  select, input[type="text"] {
+    color: #000; background: #fff; border: none; padding: 0;
+    -webkit-appearance: none; appearance: none; background-image: none;
+  }
+  a { color: #000; text-decoration: none; }
+}
