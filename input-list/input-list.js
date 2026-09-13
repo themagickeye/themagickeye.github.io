@@ -119,6 +119,11 @@ function defaultState() {
       { name: 'Bas',        stereo: true, out: 'aux' },
       { name: 'Prowadząca', stereo: true, out: 'aux' }
     ],
+    /* Odsłuch przez ULTRANET nie zajmuje busa, ale realizator musi
+       o nim wiedzieć — inaczej nie przewidzi, czym go doprowadzić.
+       Stąd osobna pozycja obok busów, nie w nich. */
+    p16Monitor: { on: false, name: 'Rytmiczna', stereo: true },
+    printP16: true,                  // czy tabela slotów idzie na kartkę
     p16: emptyP16(),                 // [{ src: id|null, tap }]
     p16Tap: DEFAULT_TAP,             // odczep nadawany nowym przypisaniom
     p16Auto: true
@@ -268,6 +273,7 @@ function capacity(state) {
   const t = TARGETS[state.target];
   const c = state.cap || {};
   return {
+    target:    state.target,
     channels:  t.locked ? t.channels  : (c.channels  || t.channels),
     auxReturn: t.locked ? t.auxReturn : (c.auxReturn || t.auxReturn),
     buses:     t.locked ? t.buses     : (c.buses     || t.buses),
@@ -320,7 +326,7 @@ function p16Sources(L, B) {
   });
 
   /* Tylko dla XR18 — tokeny są jego, nie uniwersalne. */
-  if (S.target !== 'xr18') return list;
+  if (L.cap.target !== 'xr18') return list;
 
   B.rows.forEach(r => {
     if (r.spacer) return;
@@ -684,14 +690,22 @@ function renderPrintSheet(L, B) {
   }
 
   const buses = B.rows.filter(r => !r.spacer);
-  if (buses.length) {
-    html += '<h2>Busy odsłuchowe</h2><table class="ps-table"><tbody>' +
+  const m = S.p16Monitor;
+  if (buses.length || m.on) {
+    html += '<h2>Odsłuchy</h2><table class="ps-table"><tbody>' +
       buses.map(r => '<tr><td class="ps-n">' + r.slots.map(pad).join('-') + '</td>' +
         '<td class="ps-name">' + esc(r.bus.name) + '</td>' +
         '<td>' + (r.bus.stereo ? 'stereo' : 'mono') + '</td>' +
         '<td class="ps-note">' + (r.bus.out === 'aux' ? 'Aux Out' : r.bus.out === 'ultranet' ? 'slot P16' : 'Aux Out + slot P16') +
-        '</td></tr>').join('') + '</tbody></table>';
+        '</td></tr>').join('') +
+      (m.on ? '<tr><td class="ps-n">P16</td>' +
+        '<td class="ps-name">' + esc(m.name || 'P16') + '</td>' +
+        '<td>' + (m.stereo ? 'stereo' : 'mono') + '</td>' +
+        '<td class="ps-note">ULTRANET — wymaga doprowadzenia skrętki na scenę</td></tr>' : '') +
+      '</tbody></table>';
   }
+
+  if (!S.printP16) { $('#print-sheet').innerHTML = html; return; }
 
   const avail = p16Sources(L, B);
   if (S.p16.some(sl => avail.some(a => a.id === sl.src))) {
@@ -741,6 +755,9 @@ function buildJSON(L, B) {
     buses: B.rows.filter(r => !r.spacer).map(r => ({
       slots: r.slots, name: r.bus.name, stereo: r.bus.stereo, out: r.bus.out,
       outVerified: r.bus.out === 'aux', overCapacity: r.over })),
+    p16Monitor: S.p16Monitor.on
+      ? { name: S.p16Monitor.name, stereo: S.p16Monitor.stereo, via: 'ultranet' }
+      : null,
     p16: S.p16.map((sl, i) => {
       const a = avail.find(x => x.id === sl.src);
       const tap = P16_TAPS.find(t => t.v === sl.tap);
@@ -871,6 +888,44 @@ function migrateP16(arr) {
   });
 }
 
+/* Wyeksportowany JSON opisuje ZAMIAR, nie stan interfejsu, więc nie da
+   się go po prostu wczytać — trzeba go złożyć z powrotem. Sloty P16
+   trzymają tokeny pulpitu (Ch07, Bus1), a te znaczą co innego przy innej
+   liście kanałów, więc najpierw odtwarzamy listę, a dopiero potem
+   dopasowujemy do niej tokeny. */
+function stateFromExport(j) {
+  if (j && j.src && j.target) return j;          // surowy stan (stary preset)
+  if (!j || !j.selection) throw new Error('To nie jest plik z tego konfiguratora');
+
+  const st = defaultState();
+  st.gig = Object.assign(st.gig, j.gig || {});
+  st.target = (j.console && j.console.target) || st.target;
+  st.src = Object.assign(st.src, j.selection, migrateSrc(j.selection));
+
+  if (j.console && !TARGETS[st.target].locked) {
+    st.cap = {
+      channels:  j.console.channelSlots,
+      auxReturn: j.console.auxReturnSlots,
+      buses:     j.console.busSlots
+    };
+  }
+  if (Array.isArray(j.buses) && j.buses.length) {
+    st.buses = j.buses.map(b => ({ name: b.name || '', stereo: !!b.stereo, out: b.out || 'aux' }));
+  }
+  if (j.p16Monitor) st.p16Monitor = Object.assign(st.p16Monitor, j.p16Monitor);
+
+  const L = layout(st), B = layoutBuses(st);
+  const avail = p16Sources(L, B);
+  st.p16 = emptyP16();
+  (j.p16 || []).forEach((x, i) => {
+    if (i > 15 || !x || !x.source) return;
+    const a = avail.find(v => v.osc === x.source);
+    st.p16[i] = { src: a ? a.id : null, tap: x.tap || DEFAULT_TAP };
+  });
+  st.p16Auto = false;
+  return st;
+}
+
 /* Scalanie wczytanego stanu z domyślnym: stary zapis bez nowego
    pola nie może wywrócić strony. */
 function adopt(obj) {
@@ -907,6 +962,11 @@ function syncControls() {
   $('#gig-console').value = S.gig.console || '';
   $$('[name="target"]').forEach(el => el.checked = el.value === S.target);
   $('#align').checked = S.alignPairs;
+  $('#p16mon-on').checked = S.p16Monitor.on;
+  $('#p16mon-name').value = S.p16Monitor.name || '';
+  $('#p16mon-stereo').value = S.p16Monitor.stereo ? 'stereo' : 'mono';
+  $('#p16mon-fields').hidden = !S.p16Monitor.on;
+  $('#print-p16').checked = S.printP16;
 
   const t = TARGETS[S.target], cap = capacity(S);
   $('#cap-fields').hidden = t.locked;
@@ -966,6 +1026,11 @@ function onInput(e) {
   }
   if (el.name === 'target')  { S.target = el.value; S.cap = null; S.p16Auto = true; return render(); }
   if (el.id === 'align')     { S.alignPairs = el.checked; S.links = {}; return render(); }
+  if (el.id === 'p16mon-on')     { S.p16Monitor.on = el.checked; return render(); }
+  if (el.id === 'p16mon-name')   { S.p16Monitor.name = el.value; return render(); }
+  if (el.id === 'p16mon-stereo') { S.p16Monitor.stereo = el.value === 'stereo'; return render(); }
+  if (el.id === 'print-p16')     { S.printP16 = el.checked; return render(); }
+  if (el.id === 'file-input')    { return loadFromFile(el); }
   if (el.id === 'gig-name')  { S.gig.name = el.value; return persist(); }
   if (el.id === 'gig-date')  { S.gig.date = el.value; return persist(); }
   if (el.id === 'gig-console'){ S.gig.console = el.value; return persist(); }
@@ -1073,12 +1138,43 @@ function onClick(e) {
       return render();
     case 'print':
       return window.print();
+    case 'open-file':
+      return $('#file-input').click();
   }
 }
 
 function markExport() {
   $$('[data-act^="export-"]').forEach(b =>
     b.classList.toggle('on', b.dataset.act === 'export-' + exportMode));
+}
+
+/* Plik jest jedynym zapisem, który przeżyje wyczyszczenie danych strony,
+   przesiadkę na inny komputer i inną przeglądarkę. Bez tej funkcji eksport
+   JSON był ślepą uliczką: dało się go pobrać, ale nie dało wczytać. */
+function loadFromFile(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    let data;
+    try {
+      data = JSON.parse(rd.result);
+    } catch (e) {
+      /* Surowy komunikat parsera („Unexpected token 'o'…") nic tu nie mówi. */
+      input.value = '';
+      return toast(f.name + ' to nie jest plik JSON');
+    }
+    try {
+      adopt(stateFromExport(data));
+      render();
+      toast('Wczytano ' + f.name);
+    } catch (e) {
+      toast(e.message);
+    }
+    input.value = '';   // ten sam plik musi dać się wczytać drugi raz
+  };
+  rd.onerror = () => { toast('Nie udało się odczytać pliku'); input.value = ''; };
+  rd.readAsText(f);
 }
 
 let toastTimer = null;

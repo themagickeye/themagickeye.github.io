@@ -15,7 +15,7 @@
        Dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=). -->
   <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css?v=6">
-  <link rel="stylesheet" href="input-list.css?v=2">
+  <link rel="stylesheet" href="input-list.css?v=3">
 </head>
 <body>
   <div class="crt-overlay" aria-hidden="true"></div>
@@ -95,7 +95,7 @@
 
         <div class="preset-bar">
           <div class="field">
-            <label for="preset-sel">Zapisane koncerty</label>
+            <label for="preset-sel">Zapisane w tej przeglądarce</label>
             <select id="preset-sel"></select>
           </div>
           <div class="field">
@@ -106,9 +106,23 @@
           <button type="button" class="btn" data-act="preset-save">Zapisz</button>
           <button type="button" class="btn danger" data-act="preset-del">Usuń</button>
           <button type="button" class="btn" data-act="link" title="Kopiuje adres z całą konfiguracją — można go wysłać realizatorowi">Kopiuj link</button>
+          <button type="button" class="btn" data-act="open-file">Wczytaj plik</button>
+          <input type="file" id="file-input" accept=".json,application/json" hidden>
           <button type="button" class="btn" data-act="print">Drukuj</button>
+          <label class="ch-grp" style="display:flex;align-items:center;gap:.35rem">
+            <input type="checkbox" id="print-p16"> drukuj sloty P16
+          </label>
           <button type="button" class="btn danger" data-act="reset">Od nowa</button>
         </div>
+
+        <p class="ch-grp" style="text-transform:none;margin:.25rem 0 0">
+          <b>Gdzie to siedzi:</b> „Zapisz" odkłada konfigurację w pamięci
+          <b>tej jednej przeglądarki na tym komputerze</b> — nic nie idzie na serwer,
+          nic się nie synchronizuje, a wyczyszczenie danych strony albo tryb prywatny
+          kasuje to bez ostrzeżenia. Na trwałe: <b>Pobierz plik</b> w sekcji Eksport
+          (JSON wraca tu przyciskiem „Wczytaj plik") albo <b>Kopiuj link</b> — link
+          niesie całą konfigurację w sobie.
+        </p>
       </div>
     </section>
 
@@ -319,6 +333,28 @@
         <div class="btn-row" style="margin-top:.75rem">
           <button type="button" class="btn" data-act="bus-add">+ dodaj bus</button>
         </div>
+
+        <div style="margin-top:1.25rem;border-top:1px solid var(--accent-3);padding-top:.9rem">
+          <label class="ch-grp" style="display:flex;align-items:center;gap:.4rem;text-transform:none">
+            <input type="checkbox" id="p16mon-on">
+            <b>Ktoś słucha przez P16 / ULTRANET, nie busem</b>
+          </label>
+          <div class="bus-row" id="p16mon-fields" style="grid-template-columns:3.5rem 1fr 9rem;margin-top:.5rem" hidden>
+            <span class="bus-slots">P16</span>
+            <input type="text" id="p16mon-name" placeholder="instrument albo rola">
+            <select id="p16mon-stereo">
+              <option value="mono">mono</option>
+              <option value="stereo">stereo</option>
+            </select>
+          </div>
+          <p class="ch-grp" style="text-transform:none;margin:.6rem 0 0">
+            Taka pozycja nie zajmuje busa — trafia na kartkę dla realizatora, żeby wiedział,
+            że trzeba doprowadzić ULTRANET. <b>To pytanie o okablowanie, nie o pulpit:</b>
+            gniazdo jest przy konsolecie, więc przy realizacji z FOH-u potrzebna jest skrętka
+            na scenę, a przy więcej niż jednym P16-M także dystrybutor P16-D. Na własnym XR18
+            stojącym na scenie problem znika.
+          </p>
+        </div>
         <ul class="warn-list">
           <li class="info">
             Gniazdo to <code>/routing/aux/NN BusN POST</code>. ULTRANET działa odwrotnie, niż
@@ -434,6 +470,6 @@
   <div id="print-sheet" aria-hidden="true"></div>
 
   <div class="toast" id="toast" hidden role="status"></div>
-  <script src="input-list.js?v=2"></script>
+  <script src="input-list.js?v=3"></script>
 </body>
 </html>
