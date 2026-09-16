@@ -254,6 +254,19 @@ table.chlist tr.spacer td { color: var(--dim); font-style: italic; }
 .ch-grp, .ch-src { color: var(--dim); font-size: 0.85rem; text-transform: uppercase; }
 .ch-src.usb { color: var(--accent-2); }
 
+/* Kolumna modelu mikrofonu: pole tekstowe w wierszu, na tyle szerokie,
+   żeby „sE Electronics sE2200a II C" nie skakało na dwie linie. */
+.ch-mic input {
+  width: 100%;
+  min-width: 13rem;
+  font-size: 0.9rem;
+  padding: 0.15rem 0.4rem;
+}
+.ch-mount select { font-size: 0.9rem; padding: 0.15rem 1.5rem 0.15rem 0.4rem; min-width: 8.5rem; }
+#packing .chip b { color: var(--accent); margin-right: 0.15rem; }
+#packing .chip.stands { border-color: var(--accent-2); }
+#packing .chip { color: var(--fg); text-transform: none; }
+
 /* Klamra pary stereo — rysowana bordersami, żeby nie wymagała grafiki */
 .ch-link { width: 7rem; white-space: nowrap; }
 .ch-link .bracket { color: var(--accent-2); }
@@ -381,6 +394,208 @@ tr.linked .ch-name { color: var(--accent-2); }
 }
 .toast[hidden] { display: none !important; }
 
+/* ---------- Stageboxy i patch sceny ---------- */
+/* Ikona typu połączenia: rysunek SVG plus opcjonalny mikropodpis.
+   Poprzednio stał tu znak Unicode i był nieczytelny — ◉ od ◎ nie
+   odróżnia się na ekranie ani na wydruku. Rysunek niesie kształt,
+   podpis („48V", „16") domyka znaczenie. */
+.sym {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15em;
+  color: var(--accent);
+  white-space: nowrap;
+  vertical-align: -0.2em;
+}
+.ico {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+  display: block;
+}
+/* Podpis jest celowo mniejszy od tekstu wokół: ma domykać ikonę,
+   a nie konkurować z nazwą kanału. */
+.sym-t {
+  font-size: 0.62em;
+  letter-spacing: 0.04em;
+  font-weight: bold;
+  color: var(--accent-2);
+}
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; margin: 0.25rem 0 0.5rem; }
+.legend .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: none;
+  color: var(--dim);
+}
+.legend .chip b { color: var(--fg); }
+
+/* Kolumna typu w patchu: ikona i lista obok siebie, lista nie rozpycha wiersza. */
+.pc-conn { white-space: nowrap; }
+.pc-conn .sym { margin-right: 0.3rem; }
+.pc-conn select { max-width: 8.5rem; }
+
+.sb-row {
+  display: grid;
+  grid-template-columns: 4rem 12rem 8rem 1fr;
+  gap: 0.4rem 0.6rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px dashed var(--accent-3);
+}
+.sb-row .sb-spec, .sb-row .sb-custom { grid-column: 2 / -1; text-transform: none; }
+.sb-row .sb-custom { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+/* Wiersz gniazd na karcie: „ADA 01" jest dłuższe niż „01", więc
+   kolumna numeru musi pomieścić oba bez łamania. */
+.jack-n { font-size: 1.05rem; }
+.sb-custom input[type="number"] { width: 5rem; }
+
+table.patch tr.grp td {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--accent-3);
+  padding-top: 1rem;
+}
+table.patch tr.conflict td { color: #ff9c9c; }
+table.patch tr.conflict .ch-name { color: #ff9c9c; }
+table.patch tr.unpatched .ch-name { color: var(--dim); }
+table.patch tr.usb td { color: var(--dim); }
+table.patch select { max-width: 100%; }
+
+/* Karty boksów: widok od strony sceny — to, co idzie na plan. */
+.sb-matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+  gap: 1rem;
+}
+.sb-card { border: 1px solid var(--border); padding: 0.75rem 1rem; }
+.sb-card h4 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  font-weight: normal;
+}
+/* Podtytuł (AES50 + pozycja) łamał się mid-zdania obok dużego tytułu
+   — teraz to osobna linia. .sb-sub go wyróżnia, żeby to samo .ch-grp
+   nie musiało zmieniać zachowania wszędzie indziej. */
+.sb-sub { display: block; font-family: var(--font-body); font-size: 0.8rem; margin: 0.15rem 0 0; letter-spacing: 0.08em; }
+.sb-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.25rem; }
+.sb-cols h5 {
+  margin: 0 0 0.3rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-2);
+  font-weight: normal;
+}
+.sb-un { grid-column: 1 / -1; margin-top: 0.4rem; }
+.jacks { list-style: none; margin: 0; padding: 0; }
+.jack {
+  display: grid;
+  grid-template-columns: 3.6rem 1.4rem minmax(0, 1fr);
+  gap: 0.3rem;
+  align-items: center;
+  padding: 0.1rem 0;
+  border-bottom: 1px dashed var(--accent-3);
+  font-size: 0.9rem;
+}
+.jack-ico { display: flex; justify-content: center; }
+.jack-n {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--accent);
+  text-align: right;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* Karta gniazd konsolety odróżnia się ramką: to nie jest scena. */
+.sb-card.local { border-style: dashed; }
+.sb-card.local h4 { color: var(--accent-2); }
+.jack-name { color: var(--fg); letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jack-name .ch-grp { margin-left: 0.4rem; }
+.jack.empty .jack-n, .jack.empty .jack-name { color: var(--accent-3); }
+.jack.conflict .jack-name { color: #ff9c9c; }
+
+/* ---------- Zwijanie sekcji ----------
+   Tytuł panelu jest przyciskiem: strzałka po prawej mówi, w którą
+   stronę pójdzie. Rysowana ramką, nie znakiem — w tym foncie znaki
+   strzałek potrafią wypaść z innego kroju. */
+.panel[data-panel] > .panel-title {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  padding-right: 3rem;
+}
+.panel[data-panel] > .panel-title::after {
+  content: '';
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  width: 0.6em;
+  height: 0.6em;
+  border-right: 3px solid var(--bg);
+  border-bottom: 3px solid var(--bg);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 120ms ease;
+}
+.panel.collapsed > .panel-title::after { transform: translateY(-40%) rotate(-45deg); }
+.panel[data-panel] > .panel-title:focus-visible { outline: 3px solid var(--fg); outline-offset: -3px; }
+.panel[data-panel] > .panel-title:hover { filter: brightness(1.12); }
+.panel.collapsed > .panel-title { border-bottom-width: 0; }
+.panel.collapsed > .panel-body { display: none; }
+.panel.collapsed { margin-bottom: 1.25rem; }
+
+/* ---------- Opcje wydruku ---------- */
+.print-opts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.9rem;
+  text-transform: none;
+  padding: 0.2rem 0.5rem;
+  border: 1px dashed var(--accent-3);
+}
+.print-opts > span:first-child { color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; }
+.print-opts label { display: inline-flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+
+/* ---------- Kable i zasilanie ---------- */
+.jacks.cables .jack { grid-template-columns: 2.6rem 0 minmax(0, 1fr); }
+.jacks.cables .jack-name { white-space: normal; }
+.bus-row.pw { grid-template-columns: 4rem 12rem 1fr 6rem 2.5rem; }
+.bus-row.pw select { width: 100%; }
+.bus-row.pw.derived > span:first-child + span { color: var(--fg); }
+.bus-row.pw.derived { color: var(--dim); }
+.bus-row.pw input[type="number"] { width: 100%; }
+@media (max-width: 700px) {
+  .bus-row.pw { grid-template-columns: 3rem 1fr; }
+}
+
+/* ---------- Plan sceny ----------
+   SVG dziedziczy kolor z rodzica (currentColor), więc ten sam rysunek
+   jest zielony na ekranie i czarny na kartce — bez drugiej wersji. */
+.plot { color: var(--accent); margin: .5rem 0 0; }
+.plot-svg { width: 100%; height: auto; display: block; }
+.plot-svg text { font-family: var(--font-body); fill: currentColor; }
+.plot-svg .stage { fill: none; stroke: currentColor; stroke-width: 2; }
+.plot-svg .st rect { fill: var(--bg); stroke: currentColor; stroke-width: 1.5; }
+.plot-svg .kb rect { fill: var(--bg); stroke: currentColor; stroke-width: 1.5; stroke-dasharray: 5 3; }
+.plot-svg .foh rect { fill: var(--bg); stroke: currentColor; stroke-width: 1.5; }
+.plot-svg .link { stroke: currentColor; stroke-width: 1; stroke-dasharray: 3 4; opacity: .5; }
+.plot-svg .h { font-size: 13px; font-weight: bold; letter-spacing: .04em; }
+.plot-svg .d { font-size: 10px; }
+.plot-svg .ax { font-size: 10px; letter-spacing: .18em; opacity: .75; }
+.plot-svg .note { font-size: 9.5px; opacity: .7; }
+.plot-svg .mid { text-anchor: middle; }
+.plot-svg .end { text-anchor: end; }
+.bus-row.pl { grid-template-columns: 12rem 9rem 1fr; }
+
 /* ---------- Presety ---------- */
 .preset-bar {
   display: flex;
@@ -399,6 +614,9 @@ tr.linked .ch-name { color: var(--accent-2); }
   .p16-slot { grid-template-columns: 2.5rem minmax(0, 1fr); }
   .p16-slot select[data-p16tap] { grid-column: 2; }
   .slots { display: none; }  /* 48 kratek na telefonie to kasza */
+  .sb-row { grid-template-columns: 3rem 1fr; }
+  .sb-cols { grid-template-columns: 1fr; }
+  .sb-matrix { grid-template-columns: 1fr; }
 }
 
 /* ---------- Arkusz do druku ----------
@@ -475,7 +693,52 @@ tr.linked .ch-name { color: var(--accent-2); }
     color: #444;
     white-space: nowrap;
   }
-  .ps-name { font-weight: bold; width: 40%; }
+  .ps-name { font-weight: bold; width: 28%; }
+  .ps-mic  { width: 22%; color: #222; }
+  .ps-mount { width: 11%; color: #444; white-space: nowrap; }
+  .ps-pack { margin: 0.2rem 0 0.6rem; line-height: 1.6; }
+  .ps-pack b { color: #000; }
   .ps-note { color: #444; }
   .ps-dim  { color: #888; font-style: italic; }
+  /* Ikony w druku: czarne, nieco mniejsze niż na ekranie. Kolumna ma
+     stałą szerokość, żeby nazwy stały w jednej linii pionowej. */
+  .ps-sym  { width: 3.2em; white-space: nowrap; }
+  .ps-sym .sym, .ps-table .sym, #print-sheet .sym { color: #000; }
+  #print-sheet .sym-t { color: #444; font-size: 0.6em; }
+  #print-sheet .ico { width: 1.05em; height: 1.05em; }
+  .ps-legend { color: #444; font-size: 9pt; margin: 0.3rem 0 0.6rem; }
+
+  /* Patch sceny: jeden boks = jeden blok, wejścia i wyjścia obok siebie,
+     bez łamania bloku między stronami — realizator kładzie kartkę na boksie. */
+  .ps-box { break-inside: avoid; margin-top: 0.6rem; }
+  /* Nagłówek sekcji nie może zostać sam na dole strony, gdy pierwszy
+     boks przeskoczy na następną. */
+  .ps-stage h2 { break-after: avoid; }
+  .ps-box h3 {
+    font-size: 10.5pt;
+    margin: 0.5rem 0 0.25rem;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+  }
+  .ps-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; align-items: start; }
+  /* W tabelach boksów nazwa kanału ma zostać w jednej linii — łamie się
+     dopisek z modelem, nie „VOX DRUMS". */
+  .ps-box .ps-name { width: auto; white-space: nowrap; }
+  .ps-box .ps-note { font-size: 9pt; }
+  /* Kable i zasilanie: jeden blok, nie łamać między stronami; nazwa
+     w jednej linii, dopisek może się zawijać. */
+  /* Plan sceny na osobnej kartce — bierze się go w ręce przy rozkładaniu,
+     więc nie ma dzielić strony z niczym innym. */
+  .ps-plot { break-before: page; break-inside: avoid; }
+  .ps-plot .plot-svg { width: 100%; height: auto; color: #000; }
+  .ps-plot .plot-svg text { fill: #000; }
+  .ps-plot .plot-svg .stage,
+  .ps-plot .plot-svg .st rect,
+  .ps-plot .plot-svg .kb rect,
+  .ps-plot .plot-svg .foh rect { stroke: #000; fill: #fff; }
+  .ps-plot .plot-svg .link { stroke: #000; opacity: .45; }
+
+  .ps-cables { break-inside: avoid; }
+  .ps-cables h2 { break-after: avoid; }
+  .ps-cables .ps-name { width: 34%; white-space: nowrap; }
 }

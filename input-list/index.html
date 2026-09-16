@@ -15,7 +15,7 @@
        Dociągamy z Anonymous Pro TYLKO polskie znaki (parametr text=). -->
   <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro&text=%C4%85%C4%87%C4%99%C5%82%C5%84%C3%B3%C5%9B%C5%BC%C5%BA%C4%84%C4%86%C4%98%C5%81%C5%83%C3%93%C5%9A%C5%BB%C5%B9&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css?v=6">
-  <link rel="stylesheet" href="input-list.css?v=4">
+  <link rel="stylesheet" href="input-list.css?v=18">
 </head>
 <body>
   <div class="crt-overlay" aria-hidden="true"></div>
@@ -25,9 +25,17 @@
     <header class="tool-header">
       <h1 class="tool-title">Lista wejściowa</h1>
       <p class="tool-sub">
-        Konfigurator kanałów, busów i odsłuchu P16 &nbsp;·&nbsp;
+        Konfigurator kanałów, busów, odsłuchu P16 i patcha sceny &nbsp;·&nbsp;
         <a href="../">powrót na stronę</a>
       </p>
+      <!-- Sekcje zwija się kliknięciem w ich tytuł; te dwa przyciski
+           robią to hurtem. Stan zwinięcia zostaje w tej przeglądarce
+           i nie jedzie w linku ani w pliku. -->
+      <div class="btn-row" style="margin-top:.6rem">
+        <button type="button" class="btn" data-act="collapse-all">Zwiń wszystko</button>
+        <button type="button" class="btn" data-act="expand-all">Rozwiń wszystko</button>
+        <span class="ch-grp" style="text-transform:none">kliknięcie w tytuł sekcji zwija ją pojedynczo</span>
+      </div>
     </header>
 
     <!-- ====== PASEK ZAJĘTOŚCI (przykleja się do góry ekranu) ====== -->
@@ -51,7 +59,7 @@
     </div>
 
     <!-- ====== KONCERT + PRESETY ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="gig">
       <h2 class="panel-title">Koncert</h2>
       <div class="panel-body">
         <div class="gig-meta">
@@ -76,6 +84,15 @@
             <input type="radio" name="target" id="t-wing" value="wing"><label for="t-wing">Wing</label>
             <input type="radio" name="target" id="t-other" value="other"><label for="t-other">Inna</label>
           </div>
+        </div>
+
+        <!-- Odmiana Winga rozstrzyga, ile gniazd jest na samym stole:
+             pełny WING ma 8 preampów i 8 linii Aux In, COMPACT i RACK
+             po 24 preampy bez Aux In. Różnica decyduje o tym, czy
+             lista wejściowa się mieści. -->
+        <div class="field" id="variant-wrap" style="margin-bottom:1rem" hidden>
+          <span class="field-label">Odmiana konsolety</span>
+          <div class="seg" id="variant-seg"></div>
         </div>
 
         <!-- Pojemności XR18 są zmierzone plikami scen, więc zablokowane.
@@ -112,9 +129,25 @@
           <button type="button" class="btn" data-act="open-file">Wczytaj plik</button>
           <input type="file" id="file-input" accept=".json,application/json" hidden>
           <button type="button" class="btn" data-act="print">Drukuj</button>
-          <label class="ch-grp" style="display:flex;align-items:center;gap:.35rem">
-            <input type="checkbox" id="print-p16"> drukuj sloty P16
-          </label>
+          <!-- Co idzie na kartkę. Domyślnie kartka kończy się tam, gdzie
+               kończą się kable: boks bez kabli odpada, lista gniazd urywa
+               się za ostatnim zajętym. Pełne listy są dla tych, którzy
+               chcą dopisywać ręcznie w wolnych wierszach. -->
+          <span class="print-opts ch-grp">
+            <span>na kartkę też:</span>
+            <label title="Tabela 16 slotów P16 / ULTRANET z odczepami">
+              <input type="checkbox" id="print-p16"> sloty P16
+            </label>
+            <label title="Boksy i gniazda konsolety, do których nie idzie ani jeden kabel">
+              <input type="checkbox" id="print-empty-nodes"> boksy bez kabli
+            </label>
+            <label title="Wolne gniazda do końca listy — miejsce na dopisanie ręcznie">
+              <input type="checkbox" id="print-empty-jacks"> wolne gniazda do końca
+            </label>
+            <label title="Schemat sceny na osobnej stronie">
+              <input type="checkbox" id="print-plot"> plan sceny
+            </label>
+          </span>
           <button type="button" class="btn danger" data-act="reset">Od nowa</button>
         </div>
 
@@ -130,7 +163,7 @@
     </section>
 
     <!-- ====== ŹRÓDŁA ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="sources">
       <h2 class="panel-title">Co nagłaśniamy</h2>
       <div class="panel-body">
         <div class="src-grid">
@@ -296,7 +329,7 @@
     </section>
 
     <!-- ====== LISTA WEJŚCIOWA ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="list">
       <h2 class="panel-title">Lista wejściowa</h2>
       <div class="panel-body">
         <div class="btn-row" style="margin-bottom:1rem" id="align-wrap">
@@ -309,13 +342,19 @@
           <table class="chlist">
             <thead>
               <tr>
-                <th>#</th><th>Nazwa</th><th>Grupa</th><th>Wejście</th>
+                <th>#</th><th>Nazwa</th><th>Mikrofon</th><th>Mocowanie</th><th>Grupa</th><th>Wejście</th>
                 <th>Para stereo</th><th>Uwagi</th>
               </tr>
             </thead>
             <tbody id="chlist-body"></tbody>
           </table>
         </div>
+
+        <!-- Lista do spakowania liczy się z kolumn „Mikrofon" (model → sztuki)
+             i „Mocowanie" (statywy, niskie statywy, klipsy). Para stereo to dwa
+             mikrofony, USB nie ma żadnego. -->
+        <h3 class="src-group-title" style="margin-top:1.25rem">Do spakowania</h3>
+        <div id="packing"></div>
 
         <h3 class="src-group-title" style="margin-top:1.5rem">Zwrot aux</h3>
         <div id="auxret"></div>
@@ -324,11 +363,195 @@
       </div>
     </section>
 
+    <!-- ====== STAGEBOXY I PATCH SCENY ======
+         Fizyczna strona listy wejściowej: w które gniazdo którego boksu
+         wchodzi każdy kabel. Dotyczy konsol z AES50 (Wing) — XR18 nie ma
+         do czego wpiąć stageboxa, więc dla niego sekcja jest wygaszona. -->
+    <section class="panel" id="stage-panel" data-panel="stage">
+      <h2 class="panel-title">Stageboxy i patch sceny</h2>
+      <div class="panel-body">
+        <p class="ch-grp" id="stage-noaes" style="text-transform:none" hidden>
+          XR18 nie ma AES50, więc nie ma do czego wpiąć stageboxa — wszystko wchodzi w gniazda
+          na jego panelu i „Wejście" w tabeli wyżej to właśnie one. Ta sekcja ożywa po
+          wybraniu Winga (3× AES50) albo innej konsolety z AES50.
+        </p>
+
+        <div id="stage-body">
+          <div class="field" style="margin-bottom:1rem">
+            <span class="field-label">Stageboxy na scenie</span>
+            <div class="seg">
+              <input type="radio" name="sbcount" id="sb0" value="0"><label for="sb0">brak</label>
+              <input type="radio" name="sbcount" id="sb1" value="1"><label for="sb1">jeden</label>
+              <input type="radio" name="sbcount" id="sb2" value="2"><label for="sb2">dwa</label>
+            </div>
+          </div>
+
+          <div id="sb-list"></div>
+
+          <!-- Gniazda na samej konsolecie. Instrukcja WING 5.4 mówi wprost,
+               że źródło wybiera się osobno dla każdego kanału, więc lokalne
+               preampy i stagebox po AES50 działają jednocześnie. -->
+          <div id="local-wrap" style="margin-top:1rem;border-top:1px solid var(--accent-3);padding-top:.8rem" hidden>
+            <label class="ch-grp" style="display:flex;align-items:center;gap:.4rem;text-transform:none">
+              <input type="checkbox" id="use-local">
+              <b>Używaj też gniazd na samej konsolecie</b>
+            </label>
+            <p class="ch-grp" id="local-spec" style="text-transform:none;margin:.35rem 0 0"></p>
+            <div class="gig-meta" id="local-cap" style="margin:.5rem 0 0" hidden>
+              <div class="field">
+                <label for="loc-ins">Wejść XLR na konsolecie</label>
+                <input type="number" id="loc-ins" min="0" max="64">
+              </div>
+              <div class="field">
+                <label for="loc-outs">Wyjść XLR na konsolecie</label>
+                <input type="number" id="loc-outs" min="0" max="32">
+              </div>
+            </div>
+            <p class="ch-grp" style="text-transform:none;margin:.5rem 0 0">
+              <b>Tak, to działa razem.</b> Instrukcja WING (sekcja 5.4 ROUTING) wylicza grupy źródeł —
+              Local In, Aux In, AES50 A/B/C, USB — i każdy z 40 kanałów wybiera swoją osobno.
+              Nie ma trybu „albo stół, albo stagebox”. Dwa najmniejsze boksy to 16 wejść,
+              ale pełny WING dokłada 8 preampów, a COMPACT i RACK aż 24.
+              Automat sięga po gniazda stołu <b>na końcu</b>: jeśli konsoleta stoi na FOH-u,
+              każdy taki kabel trzeba przeciągnąć przez salę.
+            </p>
+          </div>
+
+          <div class="btn-row" style="margin-top:.9rem">
+            <button type="button" class="btn" data-act="rig-wing"
+              title="Ustawia konsoletę, odmianę, oba boksy i przetwornik ADAT">
+              Zestaw na ten koncert: WING COMPACT + DL16 + DL32
+            </button>
+          </div>
+
+          <p class="ch-grp" style="text-transform:none;margin:.75rem 0 0">
+            <b>Co jest na ten koncert:</b> <b>Midas DL16</b> z przetwornikiem <b>ADA8000</b>
+            wpiętym w gniazdo optyczne (16 wejść, 8 wyjść na boksie plus 8 na przetworniku)
+            oraz pożyczony <b>Midas DL32</b> (32 wejścia, 16 wyjść). Oba mają po jednym porcie
+            ULTRANET, a odsłuch osobisty to jeden <b>P16-HQ</b>, więc dystrybutor P16-D
+            jest niepotrzebny. Razem z 24 preampami WING-a COMPACT daje to 72 wejścia XLR
+            przy kilkunastu potrzebnych — wejść nie zabraknie, zabraknąć może kabli.
+          </p>
+
+          <p class="ch-grp" style="text-transform:none;margin:.5rem 0 0">
+            <b>Który model, gdyby kompletować od zera:</b> Wing nie ma ULTRANET-u, więc P16 karmi się
+            z portu na stageboxie po AES50. Najniższy model, który ma oba (AES50 + ULTRANET), to
+            <b>Behringer SD8</b>: 8 wejść, 8 wyjść, dwa gniazda AES50, hub ULTRANET zasilający
+            dwa odbiorniki po skrętce. Stopień wyżej <b>SD16</b> (16 we / 8 wy, ULTRANET ×4).
+            Seria S16/S32 i Midas DL16/DL32 mają jeden port ULTRANET, za to wyjścia ADAT,
+            którymi da się dołożyć analogowe wyjścia przetwornikiem. Liczby z kart produktów;
+            czego karta nie mówi, jest oznaczone kropkowaną linią.
+          </p>
+
+          <div id="patch-wrap" hidden>
+            <h3 class="src-group-title" style="margin-top:1.5rem">Legenda</h3>
+            <div class="legend" id="legend"></div>
+
+            <div class="btn-row" style="margin:.75rem 0">
+              <button type="button" class="btn" data-act="stage-auto">Wypełnij po kolei</button>
+              <button type="button" class="btn danger" data-act="stage-clear">Wyczyść</button>
+              <span class="ch-grp" id="stage-auto-note" style="text-transform:none">
+                Gniazda wypełniają się po kolei do pierwszej ręcznej zmiany. Zmiana litery boksu
+                sama dobiera najniższe wolne gniazdo.
+              </span>
+            </div>
+
+            <h3 class="src-group-title">Patch — co w które gniazdo</h3>
+            <div class="table-wrap">
+              <table class="chlist patch">
+                <thead>
+                  <tr><th>#</th><th>Typ</th><th>Nazwa</th><th>Stagebox</th><th>Gniazdo</th><th>Uwagi</th></tr>
+                </thead>
+                <tbody id="patch-body"></tbody>
+              </table>
+            </div>
+
+            <h3 class="src-group-title" style="margin-top:1.5rem">Od strony sceny i stołu</h3>
+            <p class="ch-grp" style="text-transform:none;margin:.25rem 0 .5rem">
+              Każde gniazdo w osobnym wierszu — to jest widok do przeniesienia na plan sceny.
+              Rozmieszczenie boksów (perkusja i bas przy jednym, gitary przy drugim) ustawia się
+              tu literą, nie algorytmem. Domyślnie zwięźle: wolne gniazda za ostatnim zajętym
+              i boksy bez ani jednego kabla (np. gniazda na konsolecie, gdy nic tam nie wpięto)
+              są schowane — to preferencja tej przeglądarki, nie jedzie w linku ani w pliku.
+            </p>
+            <div class="btn-row" style="margin-bottom:.75rem">
+              <label class="ch-grp" style="display:flex;align-items:center;gap:.35rem">
+                <input type="checkbox" id="show-empty-jacks"> pokaż wolne gniazda do końca
+              </label>
+              <label class="ch-grp" style="display:flex;align-items:center;gap:.35rem">
+                <input type="checkbox" id="show-empty-nodes"> pokaż boksy bez kabli
+              </label>
+            </div>
+            <div class="sb-matrix" id="sb-matrix"></div>
+            <p class="ch-grp" id="sb-skipped" style="text-transform:none;margin:.6rem 0 0"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== KABLE I ZASILANIE ======
+         Liczniki do pakowania: XLR i skrętki liczą się z listy i patcha,
+         zasilanie 230 V z ręcznej listy stanowisk plus stageboxy z patcha. -->
+    <section class="panel" data-panel="cables">
+      <h2 class="panel-title">Kable i zasilanie</h2>
+      <div class="panel-body">
+        <div class="sb-cols" style="gap:1rem 2rem">
+          <div>
+            <h3 class="src-group-title" style="margin-top:0">Kable</h3>
+            <p class="ch-grp" style="text-transform:none;margin:.25rem 0 .5rem">
+              XLR: jeden na każde wejście (DI też kończy się XLR-em) i jeden na każde
+              wyjście odsłuchowe, stereo to dwa. Skrętka ekranowana Cat5e: jedna na każdy
+              stagebox i jedna na każdy odbiornik P16. Liczby bez zapasu, zapas dołóż sam.
+            </p>
+            <div id="cables"></div>
+          </div>
+          <div>
+            <h3 class="src-group-title" style="margin-top:0">Zasilanie 230 V — razem: <span id="power-total">0</span>
+              <span class="ch-grp" id="power-split" style="letter-spacing:0;margin-left:.5rem"></span></h3>
+            <p class="ch-grp" style="text-transform:none;margin:.25rem 0 .5rem">
+              Stageboxy, przetworniki i konsoletę dolicza narzędzie. Resztę wpisz po stanowiskach:
+              wzmacniacze, pedalboardy, wzmacniacze słuchawkowe, P16, komputer. Każdy wiersz ma
+              miejsce: scena albo FOH. Realizator pewnie ma listwę w racku, ale liczymy i FOH,
+              bo lepiej wziąć za dużo przedłużaczy niż za mało.
+            </p>
+            <div id="power-body"></div>
+            <div class="btn-row" style="margin-top:.6rem">
+              <button type="button" class="btn" data-act="pw-add">+ dodaj stanowisko</button>
+            </div>
+            <p class="ch-grp" id="power-strips" style="text-transform:none;margin:.75rem 0 0"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== PLAN SCENY ======
+         Schemat rysowany z tych samych danych co reszta: pozycje to sloty
+         siatki 3×3, treść kart bierze się z listy wejściowej, busów,
+         patcha i zasilania. Nic się tu nie wpisuje ręcznie poza tym,
+         gdzie kto stoi. -->
+    <section class="panel" data-panel="plot">
+      <h2 class="panel-title">Plan sceny</h2>
+      <div class="panel-body">
+        <p class="ch-grp" style="text-transform:none;margin:0 0 .75rem">
+          Widok <b>z góry</b>, ale lewo i prawo tak, jak widzi je <b>widownia</b> i realizator
+          na FOH-u — nie muzyk stojący twarzą do publiczności. Obie konwencje są w użyciu,
+          więc rysunek mówi to wprost. Karty stanowisk liczą się same z listy wejściowej,
+          busów, patcha i zasilania; ręcznie ustawia się tylko to, gdzie kto stoi.
+        </p>
+        <div id="plot-ctl"></div>
+        <div class="plot" id="plot"></div>
+        <ul class="warn-list" id="plot-notes"></ul>
+      </div>
+    </section>
+
     <!-- ====== BUSY ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="buses">
       <h2 class="panel-title">Busy odsłuchowe</h2>
       <div class="panel-body">
-        <p class="info-text ch-grp" style="text-transform:none">
+        <!-- Zasada nieparzystego startu jest specyfiką XR18 (/config/buslink) —
+             na Wingu para stereo może zaczynać się na parzystym (instrukcja WING,
+             sekcja 2.6), więc ten akapit chowa się poza XR18. -->
+        <p class="info-text ch-grp" id="buslink-note" style="text-transform:none">
           Bus stereo zajmuje dwa sloty i — tak samo jak kanały — musi zaczynać się
           na nieparzystym: <code>/config/buslink</code> linkuje wyłącznie 1-2, 3-4, 5-6.
         </p>
@@ -353,9 +576,10 @@
           <p class="ch-grp" style="text-transform:none;margin:.6rem 0 0">
             Taka pozycja nie zajmuje busa — trafia na kartkę dla realizatora, żeby wiedział,
             że trzeba doprowadzić ULTRANET. <b>To pytanie o okablowanie, nie o pulpit:</b>
-            gniazdo jest przy konsolecie, więc przy realizacji z FOH-u potrzebna jest skrętka
-            na scenę, a przy więcej niż jednym P16-M także dystrybutor P16-D. Na własnym XR18
-            stojącym na scenie problem znika.
+            na XR18 gniazdo jest przy konsolecie, więc przy realizacji z FOH-u potrzebna jest
+            skrętka na scenę, a przy więcej niż jednym P16-M także dystrybutor P16-D. Na własnym
+            XR18 stojącym na scenie problem znika. Na Wingu ze stageboxem port ULTRANET jest
+            na boksie, czyli już na scenie — który boks, wskazuje sekcja „Stageboxy i patch sceny".
           </p>
         </div>
         <ul class="warn-list">
@@ -370,7 +594,7 @@
     </section>
 
     <!-- ====== P16 ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="p16">
       <h2 class="panel-title">Odsłuch P16 / ULTRANET</h2>
       <div class="panel-body">
         <p class="info-text ch-grp" style="text-transform:none">
@@ -438,7 +662,7 @@
     </section>
 
     <!-- ====== EKSPORT ====== -->
-    <section class="panel">
+    <section class="panel" data-panel="export">
       <h2 class="panel-title">Eksport</h2>
       <div class="panel-body">
         <p class="info-text ch-grp" style="text-transform:none">
@@ -473,6 +697,6 @@
   <div id="print-sheet" aria-hidden="true"></div>
 
   <div class="toast" id="toast" hidden role="status"></div>
-  <script src="input-list.js?v=4"></script>
+  <script src="input-list.js?v=18"></script>
 </body>
 </html>
