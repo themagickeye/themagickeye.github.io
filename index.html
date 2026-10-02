@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Magick Eye — oficjalna strona zespołu. Rytuały, inkantacje, gnoza.">
+  <meta name="description" content="The Magick Eye — oficjalna strona zespołu: muzyka, wideo, koncerty i linki.">
   <title>The Magick Eye</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
   <link rel="alternate" hreflang="pl" href="https://themagickeye.github.io/">
   <link rel="alternate" hreflang="en" href="https://themagickeye.github.io/en/">
   <link rel="alternate" hreflang="x-default" href="https://themagickeye.github.io/">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
   <!-- Nakładka CRT: scanlines + winieta -->
@@ -283,7 +283,7 @@
 
       <!-- ============ SEKCJA: INFORMACJE OGÓLNE ============ -->
       <section class="panel" id="info">
-        <h2 class="panel-title">☤ GNOZA</h2>
+        <h2 class="panel-title">☤ GNOZA<span class="panel-anchor">#info</span></h2>
         <div class="panel-body">
           <p class="info-text">Zespół z Poznania.</p>
         </div>
@@ -291,11 +291,11 @@
 
       <!-- ============ SEKCJA: NADCHODZĄCE KONCERTY ============ -->
       <section class="panel" id="koncerty">
-        <h2 class="panel-title">☤ RYTUAŁY</h2>
+        <h2 class="panel-title">☤ RYTUAŁY<span class="panel-anchor">#koncerty</span></h2>
         <div class="panel-body">
           <ul class="gig-list">
-            <li class="gig">
-              <span class="gig-date">20.09.2026</span>
+            <li class="gig gig--past">
+              <span class="gig-date">19.09.2026</span>
               <span class="gig-venue">Fort II — live sesja</span>
               <span class="gig-city">Poznań</span>
             </li>
@@ -307,6 +307,7 @@
             <li class="gig">
               <span class="gig-date">17.10.2026</span>
               <span class="gig-venue">Dom Technika</span>
+              <a class="gig-link" href="https://www.facebook.com/events/1608147704027348" target="_blank" rel="noopener">link do wydarzenia FB</a>
               <span class="gig-city">Poznań</span>
             </li>
             <li class="gig">
@@ -320,14 +321,26 @@
 
       <!-- ============ SEKCJA: LINKI AUDIO / WIDEO ============ -->
       <section class="panel" id="media">
-        <h2 class="panel-title">☤ INKANTACJE</h2>
+        <h2 class="panel-title">☤ INKANTACJE<span class="panel-anchor">#media</span></h2>
         <div class="panel-body">
 
-          <!-- Cztery filmy z kanału, od najnowszego. Gdy pojawi się
+          <!-- Filmy z kanału, od najnowszego. Gdy pojawi się
                wydawnictwo na Bandcampie, można dołożyć piątą kafelkę:
                <iframe src="https://bandcamp.com/EmbeddedPlayer/album=ID/size=large/"
                        seamless></iframe> -->
           <div class="media-grid">
+            <figure class="media-item">
+              <div class="embed-frame">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/9i5ncFNfXqI"
+                  title="THE MAGICK EYE ONE FOOT LIVE AT FORT II"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <figcaption>THE MAGICK EYE ONE FOOT LIVE AT FORT II</figcaption>
+            </figure>
+
             <figure class="media-item">
               <div class="embed-frame">
                 <iframe
@@ -390,7 +403,7 @@
 
     <!-- ============ STOPKA KONTAKTOWA ============ -->
     <footer class="site-footer" id="kontakt">
-      <h2 class="panel-title">☤ TELEPATIA</h2>
+      <h2 class="panel-title">☤ TELEPATIA<span class="panel-anchor">#kontakt</span></h2>
       <div class="footer-body">
         <p><span class="stat-key">KONTAKT:</span> <a href="mailto:themagickeye@gmail.com">themagickeye@gmail.com</a></p>
 
