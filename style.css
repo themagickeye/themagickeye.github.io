@@ -387,8 +387,27 @@ body {
 /* --- Oko otwiera się, gdy pieczęć się domknie (181 × 14ms) --- */
 .seal-eye {
   opacity: 0;
-  animation: seal-eye 900ms ease-out both;
-  animation-delay: 2534ms;
+  transform-box: fill-box;               /* mrugnięcie: ściśnięcie Oka do kreski */
+  transform-origin: center;
+  animation:
+    seal-eye   900ms ease-out 2534ms both,          /* otwarcie Oka */
+    seal-blink 9s steps(1, end) 7000ms infinite;    /* po strojeniu: mruga */
+}
+/* Mrugnięcie skokami (pixel art), co 9 s: raz pojedyncze, raz podwójne,
+   żeby nie tykało jak metronom. 1% cyklu = 90 ms. */
+@keyframes seal-blink {
+  0%   { transform: scaleY(1); }
+  58%  { transform: scaleY(.45); }
+  59%  { transform: scaleY(.08); }
+  60%  { transform: scaleY(.45); }
+  61%  { transform: scaleY(1); }
+  93%  { transform: scaleY(.45); }
+  94%  { transform: scaleY(.08); }
+  95%  { transform: scaleY(1); }
+  96%  { transform: scaleY(.08); }
+  97%  { transform: scaleY(.45); }
+  98%  { transform: scaleY(1); }
+  100% { transform: scaleY(1); }
 }
 @keyframes seal-eye { from { opacity: 0; } to { opacity: 1; } }
 
