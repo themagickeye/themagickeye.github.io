@@ -397,6 +397,24 @@ body {
 .seal-eye .lens  { fill: var(--accent); }
 .seal-eye .edge  { fill: var(--accent-2); }
 .seal-eye .pupil { fill: var(--bg); }
+.seal-eye .ray   { fill: var(--border); }   /* prążki anody lampy 6E5 */
+.seal-eye .shadow rect { fill: var(--bg); } /* cień wiązki */
+
+/* --- Strojenie: Oko otwiera się rozstrojone (szeroki cień), potem cień
+   „poluje” na stację i zwęża się do kreski = IN TUNE. Warstwy cienia
+   znikają kolejno (--k), z jednym cofnięciem jak przy kręceniu gałką.
+   Start: tuż po otwarciu Oka (2534ms + 900ms). Czysty CSS, 0 js. --- */
+.seal-eye .tune {
+  animation: seal-tune 1600ms steps(1, end) both;
+  animation-delay: calc(3500ms + var(--k) * 120ms);
+}
+@keyframes seal-tune {
+  0%   { opacity: 1; }
+  30%  { opacity: 0; }   /* cień się zwęża…            */
+  52%  { opacity: 1; }   /* …przestrzelona stacja…     */
+  64%  { opacity: 0; }   /* …i z powrotem: nastrojone  */
+  100% { opacity: 0; }
+}
 
 /* ---------- Pasek inwokacji (składnia terminala Hermesa) ---------- */
 .invocation {
@@ -441,6 +459,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .seal-trace rect { animation: none; opacity: 1; fill: var(--accent); }
   .seal-eye { animation: none; opacity: 1; }
+  .seal-eye .tune { animation: none; opacity: 0; }   /* od razu IN TUNE */
   .bar-cell { animation: none; color: var(--accent); }
 }
 
