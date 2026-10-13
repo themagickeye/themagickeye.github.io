@@ -27,8 +27,18 @@ DST = ROOT / "en" / "index.html"
 # Pary (polski, angielski). Kolejność ma znaczenie: podmieniane po kolei.
 TRANSLATIONS = [
     ('<html lang="pl">', '<html lang="en">'),
-    ('content="The Magick Eye — oficjalna strona zespołu. Rytuały, inkantacje, gnoza."',
-     'content="The Magick Eye — official band site. Rites, incantations, gnosis."'),
+    ('content="The Magick Eye — oficjalna strona zespołu: muzyka, wideo, koncerty i linki."',
+     'content="The Magick Eye — official band site: music, videos, shows and links."'),
+    # Open Graph / Twitter
+    ("""  <!-- Open Graph / Twitter: miniatura w podglądzie linku (FB, iMessage, Messenger).
+       og:image MUSI być bezwzględnym URL-em; FB renderuje statycznie (bez animacji). -->""",
+     """  <!-- Open Graph / Twitter: link-preview thumbnail (FB, iMessage, Messenger).
+       og:image MUST be an absolute URL; FB renders it statically (no animation). -->"""),
+    ('<meta property="og:locale" content="pl_PL">', '<meta property="og:locale" content="en_GB">'),
+    ('<meta property="og:url" content="https://themagickeye.github.io/">',
+     '<meta property="og:url" content="https://themagickeye.github.io/en/">'),
+    ('content="The Magick Eye — pieczęć z okiem, fosforowa zieleń na czerni"',
+     'content="The Magick Eye — eye seal, phosphor green on black"'),
     ('aria-label="Pieczęć zespołu: heksagram unikursalny z Okiem w środku"',
      'aria-label="Band seal: unicursal hexagram with an Eye at its centre"'),
 
@@ -50,17 +60,19 @@ TRANSLATIONS = [
     ('<span class="stat-key">KONTAKT:</span>', '<span class="stat-key">CONTACT:</span>'),
 
     # terminy — zapis daty czytelny dla anglojęzycznych
-    ('<span class="gig-date">20.09.2026</span>', '<span class="gig-date">20 Sep 2026</span>'),
+    ('<span class="gig-date">19.09.2026</span>', '<span class="gig-date">19 Sep 2026</span>'),
     ('<span class="gig-date">16.10.2026</span>', '<span class="gig-date">16 Oct 2026</span>'),
     ('<span class="gig-date">17.10.2026</span>', '<span class="gig-date">17 Oct 2026</span>'),
     ('<span class="gig-date">17.12.2026</span>', '<span class="gig-date">17 Dec 2026</span>'),
     ('Fort II — live sesja', 'Fort II — live session'),
+    ('>link do wydarzenia FB</a>', '>FB event link</a>'),
     # nazwy klubów zostają — to nazwy własne. Miasto tylko tam, gdzie
     # angielski ma utrwaloną formę: Warszawa -> Warsaw.
     ('<span class="gig-city">Warszawa</span>', '<span class="gig-city">Warsaw</span>'),
 
     # ścieżki: plik leży o katalog głębiej
     ('href="style.css?v=', 'href="../style.css?v='),
+    ('href="favicon.svg"', 'href="../favicon.svg"'),
 
     # przełącznik języka: aktywny EN, link do PL
     ('''    <nav class="lang-switch" aria-label="Wersja językowa">
@@ -80,7 +92,8 @@ TRANSLATIONS = [
 # Słowa, które po tłumaczeniu nie mają prawa zostać w treści.
 # Komentarze w kodzie są po polsku celowo — sprawdzamy tekst bez nich.
 FORBIDDEN = ["GNOZA", "RYTUAŁY", "INKANTACJE", "TELEPATIA",
-             "KONTAKT:", "Zespół", "live sesja", "Warszawa"]
+             "KONTAKT:", "Zespół", "live sesja", "Warszawa",
+             "wydarzenia", "pl_PL"]
 
 
 def main() -> int:
