@@ -298,17 +298,25 @@ body {
   text-align: center;
 }
 .site-footer .panel-title {
-  /* nie reverse-video jak pozostałe tytuły: jasny napis w ramce,
-     bo ciemne tło + ciemny tekst byłyby nieczytelne.
-     display:flex (nie inline-block) → pasek na całą szerokość,
-     z „telepatia" po lewej i #kontakt po prawej, te same kolory. */
-  background: transparent;
-  color: var(--accent-2);
+  /* te same kolory co pozostałe tytuły (zielone tło, ciemny napis);
+     display:flex → pasek na całą szerokość, „telepatia" po lewej,
+     #kontakt po prawej. text-align:left, bo stopka centruje tekst. */
   display: flex;
   text-align: left;
   border: 2px solid var(--border);
 }
 .footer-body { padding: 1.25rem 0.5rem; }
+
+/* grafika Jerzego nad kontaktem */
+.footer-art { margin: 0.5rem auto 1.5rem; max-width: 360px; }
+.footer-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--border);
+  box-shadow: 4px 4px 0 rgba(0,230,60,0.22);
+}
+.footer-art figcaption { color: var(--dim); font-size: 0.85rem; margin-top: 0.5rem; }
 .footer-body a { color: var(--accent-2); text-decoration: none; }
 .footer-body a:hover, .footer-body a:focus { color: var(--accent); text-decoration: underline; }
 
