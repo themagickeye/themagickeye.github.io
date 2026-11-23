@@ -70,7 +70,13 @@ TRANSLATIONS = [
     # angielski ma utrwaloną formę: Warszawa -> Warsaw.
     ('<span class="gig-city">Warszawa</span>', '<span class="gig-city">Warsaw</span>'),
 
+    # grafika Jerzego w stopce
+    ('alt="The Magick Eye — cztery portrety członków zespołu w zielono-czerwono-żółtym rastrze, w ramce z nazwą zespołu"',
+     'alt="The Magick Eye — four portraits of the band members in green, red and yellow halftone, framed by the band name"'),
+    ('<figcaption>grafika: Jerzy</figcaption>', '<figcaption>artwork: Jerzy</figcaption>'),
+
     # ścieżki: plik leży o katalog głębiej
+    ('src="ryje-ramka.jpg"', 'src="../ryje-ramka.jpg"'),
     ('href="style.css?v=', 'href="../style.css?v='),
     ('href="favicon.svg"', 'href="../favicon.svg"'),
 
@@ -92,7 +98,7 @@ TRANSLATIONS = [
 # Słowa, które po tłumaczeniu nie mają prawa zostać w treści.
 # Komentarze w kodzie są po polsku celowo — sprawdzamy tekst bez nich.
 FORBIDDEN = ["GNOZA", "RYTUAŁY", "INKANTACJE", "TELEPATIA",
-             "KONTAKT:", "Zespół", "live sesja", "Warszawa",
+             "KONTAKT:", "Zespół", "live sesja", "Warszawa", "grafika:", "portrety",
              "wydarzenia", "pl_PL"]
 
 
